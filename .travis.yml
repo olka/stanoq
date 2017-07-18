@@ -7,4 +7,4 @@ after_success: sbt coverageReport coveralls
 cache:
   directories:
     - $HOME/.ivy2
-- $HOME/.m2
+    - $HOME/.m2
