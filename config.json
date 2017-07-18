@@ -1,0 +1,6 @@
+{
+  "url": "https://www.websocket.org/echo.html",
+  "depthLimit": 1,
+  "timeout": 5,
+  "exclusions": ["test1","test2"]
+}
