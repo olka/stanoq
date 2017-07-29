@@ -1,5 +1,7 @@
 package org.stanoq.tests.crawler
 
+import akka.event.Logging.LoggerInitialized
+import akka.event.NoLogging
 import akka.http.scaladsl.server.ValidationRejection
 import akka.http.scaladsl.testkit.ScalatestRouteTest
 import org.scalatest._
@@ -7,7 +9,7 @@ import org.stanoq.crawler.CrawlerService
 import org.stanoq.crawler.model.{ConfigProperties, CrawlerProtocols}
 
 class ServiceNegativeSpec extends FlatSpec with Matchers with ScalatestRouteTest with CrawlerProtocols {
-  val crawlerService = new CrawlerService
+  val crawlerService = new CrawlerService(null)
 
   "org.stanoq.Service" should "respond with ValidationRejection on empty url" in {
     Post(s"/crawler", ConfigProperties("", 4)) ~> crawlerService.route ~> check {

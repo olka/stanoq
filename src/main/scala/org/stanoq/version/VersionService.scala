@@ -9,13 +9,11 @@ import com.typesafe.config.ConfigFactory
 
 class VersionService {
   val version  = ConfigFactory.load().getString("stanoq.version")
-  val route =
-    pathPrefix("version") {
+  val route = pathPrefix("version") {
       pathEnd {
         get {
-          complete(HttpResponse(StatusCodes.OK, entity = HttpEntity(ContentType(MediaTypes.`application/json`), s"{version: $version}")))
+          complete(HttpResponse(StatusCodes.OK, entity = HttpEntity(ContentType(MediaTypes.`application/json`), s"""{"version": $version}""")))
         }
       }
     }
-
 }

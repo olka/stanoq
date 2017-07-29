@@ -14,10 +14,9 @@ class LoadTest extends Simulation {
     .userAgentHeader("Mozilla/5.0 (Windows NT 5.1; rv:31.0) Gecko/20100101 Firefox/31.0")
 
   val scn = scenario("Version simulation")
-    .exec(http("VersionTest")
-    .get("/version").check(status.is(200)))//body(RawFileBody("config.json")).asJSON
-    .pause(2)
+    .exec(http("test")
+    .post("/crawler").body(RawFileBody("loadConfig.json")).asJSON.check(status.is(200))).pause(5)
 
-  setUp(scn.inject(rampUsersPerSec(200) to 550 during(1 minute))).protocols(httpConf)
+  setUp(scn.inject(rampUsersPerSec(30) to 30 during(30 seconds))).protocols(httpConf)
 
 }

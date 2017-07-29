@@ -16,8 +16,7 @@ import scala.util.Try
 
 case class Cookie(key: String, value:String)
 
-class Crawler(config:ConfigProperties, cookie: Option[Cookie] = None){
-  implicit val system = ActorSystem()
+class Crawler(system: ActorSystem,config:ConfigProperties, cookie: Option[Cookie] = None){
   val logger = Logging(system, getClass)
   val visitedPages, errorPages = createSet[String]
 
@@ -58,7 +57,7 @@ class Crawler(config:ConfigProperties, cookie: Option[Cookie] = None){
 
   private def getDocument(url: String, prev: Page): Option[Document] = {
     def getDocument(con: Connection) = if (cookie.isEmpty) Some(con.get) else Some(con.cookie(cookie.get.key, cookie.get.value).get)
-    (Try(Jsoup.connect(url).timeout(30 * 1000)).map(getDocument).recover {
+    (Try(Jsoup.connect(url).timeout(30 * 500)).map(getDocument).recover {
       case e: HttpStatusException => logger.error(e.getStatusCode + " :: on " + url + " :: came from: " + prev.url);errorPages.add(url);None
       case e: Exception => logger.info(e.getMessage);errorPages.add(url);None}).get
   }

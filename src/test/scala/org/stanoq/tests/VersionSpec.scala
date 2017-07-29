@@ -14,7 +14,7 @@ class VersionSpec extends FlatSpec with Matchers with ScalatestRouteTest {
     Get("/version") ~> versionService.route ~> check {
       status shouldBe OK
       contentType shouldBe `application/json`
-      entityAs[String] shouldBe "{version: 0.1}"
+      entityAs[String] shouldBe s"""{"version": 0.1}"""
     }
   }
 }
