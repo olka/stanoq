@@ -2,3 +2,5 @@
 [![Build Status](https://travis-ci.org/olka/stanoq.svg?branch=master)](https://travis-ci.org/olka/stanoq)
 
 STANoQ
+
+ng github-pages:deploy

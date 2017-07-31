@@ -3,6 +3,7 @@ package org.stanoq.crawler
 import java.nio.charset.StandardCharsets
 import java.nio.file.StandardOpenOption._
 import java.nio.file.{Files, Paths}
+import java.util.concurrent.ConcurrentHashMap
 
 import akka.actor.ActorSystem
 import akka.event.Logging
@@ -16,30 +17,35 @@ import scala.util.Try
 
 case class Cookie(key: String, value:String)
 
-class Crawler(system: ActorSystem,config:ConfigProperties, cookie: Option[Cookie] = None){
-  val logger = Logging(system, getClass)
-  val visitedPages, errorPages = createSet[String]
+class Crawler(config:ConfigProperties, cookie: Option[Cookie] = None){
+  val logger = Logging(ActorSystem(), getClass)
+  val visitedPages = new ConcurrentHashMap[Page,String].asScala
 
   def process: Boolean = process("")
 
   def process(url: String): Boolean = {
     logger.info("Processing " + config.getUrl + url)
-    val root: Page = new Page(config.getUrl, "ROOT")
+    val root: Page = new Page(config.getUrl, "ROOT",0)
     crawl(config.getUrl + url, 0, root)
     errorsCheck.size == 0
   }
 
-  private def errorsCheck: mutable.Set[String] = {
-    if (errorPages.size == 0) errorPages
-    logger.info("Double checking " + errorPages)
-    errorPages.filter(url => getDocument(url, new Page("", "")).isEmpty)
+  def getErrorPages = visitedPages.keySet.filter(_.statusCode!=200)
+
+  private def errorsCheck: Set[String] = {
+    val errorPages = getErrorPages
+    errorPages.map(_.url).toSet
+//    logger.info("Double checking " + errorPages)
+//    errorPages.filter(page => getDocument(page.url,null).isEmpty).map(_.url).toSet
   }
 
   private def crawl(url: String, depth: Int, prev: Page) {
-    if (!visitedPages.add(url) || depth > config.depthLimit) return
-    val doc: Document = getDocument(url, prev) getOrElse (return)
-    logger.info(visitedPages.size + " : " + url + " " + doc.title)
-    parseLinksToVisit(doc).par.foreach(link => crawl(link, depth + 1, prev.addChild(new Page(url, doc.title()))))
+    if (visitedPages.keySet.exists(_.url.equals(url)) || depth > config.depthLimit) return
+    val doc: Document = getDocument(url,prev) getOrElse (return)
+    val page = new Page(url, doc.title(), 200)
+    visitedPages.put(page,prev.url)
+//    logger.info(visitedPages.size + " : " + url + " " + doc.title + " d:"+depth)
+    parseLinksToVisit(doc).par.foreach(link => crawl(link, depth + 1, page))
   }
 
   private def parseLinksToVisit(doc: Document): mutable.Set[String] ={
@@ -52,13 +58,11 @@ class Crawler(system: ActorSystem,config:ConfigProperties, cookie: Option[Cookie
   }
 
   private def writeToFile(filename: String, slist: java.util.Collection[String]) = Try(Files.write(Paths.get(filename), slist, StandardCharsets.UTF_8, APPEND, CREATE))
-  private def createSet[T] = java.util.Collections.newSetFromMap(new java.util.concurrent.ConcurrentHashMap[T, java.lang.Boolean]).asScala
 
-
-  private def getDocument(url: String, prev: Page): Option[Document] = {
+  private def getDocument(url: String, prev:Page): Option[Document] = {
     def getDocument(con: Connection) = if (cookie.isEmpty) Some(con.get) else Some(con.cookie(cookie.get.key, cookie.get.value).get)
     (Try(Jsoup.connect(url).timeout(30 * 500)).map(getDocument).recover {
-      case e: HttpStatusException => logger.error(e.getStatusCode + " :: on " + url + " :: came from: " + prev.url);errorPages.add(url);None
-      case e: Exception => logger.info(e.getMessage);errorPages.add(url);None}).get
+      case e: HttpStatusException => logger.error(e.getStatusCode + " :: on " + url);visitedPages.put(new Page(url,e.getMessage,e.getStatusCode),prev.url);None
+      case e: Exception => logger.info(e.getMessage);visitedPages.put(new Page(url,e.getMessage,0),prev.url);None}).get
   }
 }
