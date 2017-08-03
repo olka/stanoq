@@ -21,7 +21,7 @@ class ServiceSpec extends FlatSpec with Matchers with ScalatestRouteTest with Cr
     Post(s"/crawler", configJson.parseJson.convertTo[ConfigProperties]) ~> crawlerService.route ~> check {
       status shouldBe OK
       contentType shouldBe `application/json`
-      responseAs[CrawlerResponse].nodes.size shouldBe 7
+      responseAs[CrawlerResponse].pages.size shouldBe 7
     }
   }
 
@@ -31,7 +31,7 @@ class ServiceSpec extends FlatSpec with Matchers with ScalatestRouteTest with Cr
       contentType shouldBe `application/json`
       println(response)
       val res = responseAs[CrawlerResponse]
-      res.nodes.size shouldBe 33
+      res.pages.size shouldBe 33
     }
   }
 }

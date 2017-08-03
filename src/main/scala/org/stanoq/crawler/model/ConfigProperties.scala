@@ -29,7 +29,7 @@ case class ConfigProperties(url:String, depthLimit:Int, timeout:Long=5, exclusio
 
 case class Node(id: String, label:String, status:Int )
 case class Link(source: String, target:String)
-case class CrawlerResponse(nodes: List[Node], links: List[Link])
+case class CrawlerResponse(pages: List[Node], links: List[Link])
 
 trait CrawlerProtocols extends SprayJsonSupport with DefaultJsonProtocol {
   implicit val pageFormat: RootJsonFormat[Page] = jsonFormat3(Page.apply)
