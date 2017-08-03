@@ -33,8 +33,7 @@ class Crawler(config:ConfigProperties, cookie: Option[Cookie] = None){
   def getErrorPages = visitedPages.keySet.filter(_.statusCode!=200)
 
   private def errorsCheck: Set[String] = {
-    val errorPages = getErrorPages
-    errorPages.map(_.url).toSet
+    getErrorPages.map(_.url).toSet
 //    logger.info("Double checking " + errorPages)
 //    errorPages.filter(page => getDocument(page.url,null).isEmpty).map(_.url).toSet
   }

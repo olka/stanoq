@@ -4,10 +4,10 @@ import akka.actor.ActorSystem
 import akka.event.LoggingAdapter
 import akka.http.scaladsl.model._
 import akka.http.scaladsl.server.Directives._
-import org.stanoq.crawler.model.{ConfigProperties, CrawlerProtocols, CrawlerResponse}
+import org.stanoq.crawler.model._
 import spray.json._
-import scala.concurrent._
 
+import scala.concurrent._
 import scala.concurrent.Future
 
 class CrawlerService(system: ActorSystem) extends CrawlerProtocols {
@@ -20,7 +20,9 @@ class CrawlerService(system: ActorSystem) extends CrawlerProtocols {
         val crawler = new Crawler(config)
 //        Future {
           val statusCode = if (crawler.process) StatusCodes.OK else StatusCodes.FailedDependency
-          val crawlerEntity = HttpEntity(ContentType(MediaTypes.`application/json`), CrawlerResponse(crawler.visitedPages.values.toList,crawler.visitedPages.keySet.toList).toJson.toString())
+          val nodes = crawler.visitedPages.map{case(page,url) => Node(page.url,page.pageName,page.statusCode)}.toList
+          val links = crawler.visitedPages.map{case(page,urk) => Link(urk,page.url)}.toList
+          val crawlerEntity = HttpEntity(ContentType(MediaTypes.`application/json`), CrawlerResponse(nodes,links).toJson.toString())
           HttpResponse(statusCode, entity = crawlerEntity)
 //        }
       }

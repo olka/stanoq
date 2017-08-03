@@ -27,11 +27,15 @@ case class ConfigProperties(url:String, depthLimit:Int, timeout:Long=5, exclusio
   def getExclusions: List[String] = exclusions
 }
 
-case class CrawlerResponse(keys: List[String], pages: List[Page])
+case class Node(id: String, label:String, status:Int )
+case class Link(source: String, target:String)
+case class CrawlerResponse(nodes: List[Node], links: List[Link])
 
 trait CrawlerProtocols extends SprayJsonSupport with DefaultJsonProtocol {
   implicit val pageFormat: RootJsonFormat[Page] = jsonFormat3(Page.apply)
   implicit val configFormat: RootJsonFormat[ConfigProperties] = jsonFormat4(ConfigProperties.apply)
+  implicit val nodeFormat: RootJsonFormat[Node] = jsonFormat3(Node.apply)
+  implicit val linkFormat: RootJsonFormat[Link] = jsonFormat2(Link.apply)
   implicit val crawlerResponseFormat: RootJsonFormat[CrawlerResponse] = jsonFormat2(CrawlerResponse.apply)
 }
 
