@@ -20,8 +20,9 @@ class CrawlerService(system: ActorSystem) extends CrawlerProtocols {
         val crawler = new Crawler(config)
 //        Future {
           val statusCode = if (crawler.process) StatusCodes.OK else StatusCodes.FailedDependency
-          val nodes = crawler.visitedPages.map{case(page,url) => Node(page.url,page.pageName,page.statusCode)}.toList
-          val links = crawler.visitedPages.map{case(page,urk) => Link(urk,page.url)}.toList
+          def pp(url:String) = Math.abs(url.hashCode).toString
+          val nodes = crawler.visitedPages.map{case(page,url) => Node(pp(page.url),page.pageName.trim,page.statusCode)}.toList
+          val links = crawler.visitedPages.map{case(page,url) => Link(pp(url),pp(page.url))}.toList
           val crawlerEntity = HttpEntity(ContentType(MediaTypes.`application/json`), CrawlerResponse(nodes,links).toJson.toString())
           HttpResponse(statusCode, entity = crawlerEntity)
 //        }
