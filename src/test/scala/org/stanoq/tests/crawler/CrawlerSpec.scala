@@ -11,34 +11,15 @@ import spray.json._
 
 class CrawlerSpec extends FlatSpec with Matchers {
 
-  "Crawler" should "respond with 16 processed pages on crawling websocket.org with depth 1" in {
-    val crawler = new Crawler(ConfigProperties("https://www.websocket.org/echo.html", 1)).process
-    crawler.visitedPages.size shouldBe 7
-    crawler.getErrorPages.size shouldBe 0
-  }
-
   "Crawler" should "respond with 16 processed pages on crawling websocket.org with depth 2" in {
     val crawler = new Crawler(ConfigProperties("https://www.websocket.org/echo.html", 2)).process
     crawler.visitedPages.size shouldBe 16
     crawler.getErrorPages.size shouldBe 0
   }
 
-
-//  "Crawler" should "respond with 33 processed pages on crawling websocket.org with depth 3" in {
-//    val crawler = new Crawler(ConfigProperties("https://www.websocket.org/echo.html", 3)).process
-//    crawler.visitedPages.size shouldBe 33
-//    crawler.getErrorPages.size shouldBe 2
-//  }
-
-  "Crawler" should "respond with 11 processed pages on crawling gatling.io with depth 2" in {
-    val crawler = new Crawler(ConfigProperties("http://gatling.io", 1)).process
-    crawler.visitedPages.size shouldBe 11
-    crawler.getErrorPages.size shouldBe 0
-  }
-
-  "Crawler" should "respond with 11 processed pages on crawling facebook with depth 2" in {
+  "Crawler" should "respond with 11 processed pages on crawling facebook with depth 1" in {
     val crawler = new Crawler(ConfigProperties("https://facebook.com", 1)).process
-    crawler.visitedPages.size shouldBe 10
+    crawler.visitedPages.size should be >9
     crawler.getErrorPages.size shouldBe 0
   }
 

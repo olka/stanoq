@@ -42,12 +42,11 @@ class Crawler(config:ConfigProperties, cookie: Option[Cookie] = None){
 
   private def crawl(url: String, depth: Int, prev: Page) {
     if (!visitedSet.add(url) || !visitedSet.add(url.substring(0,url.length-1)) || depth > config.depthLimit) return
-    val doc: Option[Document] = getDocument(url,prev)
-    if(doc.isEmpty) {logger.error("DOC IS EMPTY!!"); return;}
-    val page = new Page(url, doc.get.title(), 200)
+    val doc: Document = getDocument(url,prev) getOrElse (return)
+    val page = new Page(url, doc.title(), 200)
     visitedPages.put(page,prev.url)
 //    logger.info(visitedPages.size + " : " + url + " " + doc.get.title + " d:"+depth)
-    val links = parseLinksToVisit(doc.get)
+    val links = parseLinksToVisit(doc)
 //    logger.info(url + " "+links.size)
     links.par.foreach(link => crawl(link, depth + 1, page))
   }
