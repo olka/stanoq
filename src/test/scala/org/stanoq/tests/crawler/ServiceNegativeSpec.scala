@@ -9,7 +9,7 @@ import org.stanoq.crawler.CrawlerService
 import org.stanoq.crawler.model.{ConfigProperties, CrawlerProtocols}
 
 class ServiceNegativeSpec extends FlatSpec with Matchers with ScalatestRouteTest with CrawlerProtocols {
-  val crawlerService = new CrawlerService(null)
+  val crawlerService = new CrawlerService
 
   "org.stanoq.Service" should "respond with ValidationRejection on empty url" in {
     Post(s"/crawler", ConfigProperties("", 4)) ~> crawlerService.route ~> check {

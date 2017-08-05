@@ -10,21 +10,20 @@ import spray.json._
 import scala.concurrent._
 import scala.concurrent.Future
 
-class CrawlerService(system: ActorSystem) extends CrawlerProtocols {
+class CrawlerService() extends CrawlerProtocols {
 
 //  implicit val blockingDispatcher:ExecutionContext = system.dispatchers.lookup("blocking-dispatcher")
 
   def handleCrawlerRequest(config: ConfigProperties) = {
     validate(config.validate, "Config wasn't properly set!") {
       complete {
-        val crawler = new Crawler(config)
+        val crawler = new Crawler(config).process
 //        Future {
-          val statusCode = if (crawler.process) StatusCodes.OK else StatusCodes.FailedDependency
-          def pp(url:String) = Math.abs(url.hashCode).toString
-          val nodes = crawler.visitedPages.map{case(page,url) => Node(pp(page.url),page.pageName.trim,page.statusCode)}.toList
-          val links = crawler.visitedPages.map{case(page,url) => Link(pp(url),pp(page.url))}.toList
+          def getId(url:String) = Math.abs(url.hashCode).toString
+          val nodes = crawler.visitedPages.map{case(page,url) => Node(getId(page.url),page.pageName.trim,page.statusCode)}.toList
+          val links = crawler.visitedPages.map{case(page,url) => Link(getId(url),getId(page.url))}.toList
           val crawlerEntity = HttpEntity(ContentType(MediaTypes.`application/json`), CrawlerResponse(nodes,links).toJson.toString())
-          HttpResponse(statusCode, entity = crawlerEntity)
+          HttpResponse(StatusCodes.OK, entity = crawlerEntity)
 //        }
       }
     }

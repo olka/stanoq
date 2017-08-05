@@ -20,17 +20,19 @@ case class Cookie(key: String, value:String)
 class Crawler(config:ConfigProperties, cookie: Option[Cookie] = None){
   val logger = Logging(ActorSystem(), getClass)
   val visitedPages = new ConcurrentHashMap[Page,String].asScala
+  val visitedSet = createSet[String]
 
-  def process: Boolean = process("")
+  def process:Crawler = process("")
 
-  def process(url: String): Boolean = {
+  def process(url: String) = {
     logger.info("Processing " + config.getUrl + url)
     val root: Page = new Page(config.getUrl, "ROOT",0)
     crawl(config.getUrl + url, 0, root)
-    errorsCheck.size == 0
+    this
   }
 
   def getErrorPages = visitedPages.keySet.filter(_.statusCode!=200)
+  private def createSet[T] = java.util.Collections.newSetFromMap(new java.util.concurrent.ConcurrentHashMap[T, java.lang.Boolean]).asScala
 
   private def errorsCheck: Set[String] = {
     getErrorPages.map(_.url).toSet
@@ -39,20 +41,23 @@ class Crawler(config:ConfigProperties, cookie: Option[Cookie] = None){
   }
 
   private def crawl(url: String, depth: Int, prev: Page) {
-    if (visitedPages.keySet.exists(_.url.equals(url)) || depth > config.depthLimit) return
-    val doc: Document = getDocument(url,prev) getOrElse (return)
-    val page = new Page(url, doc.title(), 200)
+    if (!visitedSet.add(url) || !visitedSet.add(url.substring(0,url.length-1)) || depth > config.depthLimit) return
+    val doc: Option[Document] = getDocument(url,prev)
+    if(doc.isEmpty) {logger.error("DOC IS EMPTY!!"); return;}
+    val page = new Page(url, doc.get.title(), 200)
     visitedPages.put(page,prev.url)
-//    logger.info(visitedPages.size + " : " + url + " " + doc.title + " d:"+depth)
-    parseLinksToVisit(doc).par.foreach(link => crawl(link, depth + 1, page))
+//    logger.info(visitedPages.size + " : " + url + " " + doc.get.title + " d:"+depth)
+    val links = parseLinksToVisit(doc.get)
+//    logger.info(url + " "+links.size)
+    links.par.foreach(link => crawl(link, depth + 1, page))
   }
 
-  private def parseLinksToVisit(doc: Document): mutable.Set[String] ={
+  private def parseLinksToVisit(doc: Document): List[String] ={
     def predicate(l: Element):Boolean = {
       val link = l.attr("href")
       !(link.startsWith("#") || link.startsWith(".") || link.startsWith("mailto"))
     }
-    val list = doc.select("a[href]").iterator().asScala.toStream.filter(predicate).map(l => l.attr("abs:href")).to[mutable.Set]
+    val list = doc.select("a[href]").iterator().asScala.toStream.filter(predicate).map(l => l.attr("abs:href")).toList
     list.filter(link => config.getExclusions.filter(s => link.contains(s)).size==0 && link.contains(config.getDomain))
   }
 
@@ -60,8 +65,8 @@ class Crawler(config:ConfigProperties, cookie: Option[Cookie] = None){
 
   private def getDocument(url: String, prev:Page): Option[Document] = {
     def getDocument(con: Connection) = if (cookie.isEmpty) Some(con.get) else Some(con.cookie(cookie.get.key, cookie.get.value).get)
-    (Try(Jsoup.connect(url).timeout(30 * 500)).map(getDocument).recover {
+    (Try(Jsoup.connect(url).timeout(30 * 1000)).map(getDocument).recover {
       case e: HttpStatusException => logger.error(e.getStatusCode + " :: on " + url);visitedPages.put(new Page(url,e.getMessage,e.getStatusCode),prev.url);None
-      case e: Exception => logger.info(e.getMessage);visitedPages.put(new Page(url,e.getMessage,0),prev.url);None}).get
+      case e: Exception => logger.error(e.getMessage);visitedPages.put(new Page(url,e.getMessage,0),prev.url);None}).get
   }
 }

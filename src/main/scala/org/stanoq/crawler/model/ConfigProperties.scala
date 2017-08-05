@@ -27,7 +27,7 @@ case class ConfigProperties(url:String, depthLimit:Int, timeout:Long=5, exclusio
   def getExclusions: List[String] = exclusions
 }
 
-case class Node(id: String, label:String, title:Int )
+case class Node(id: String, label:String, statusCode:Int )
 case class Link(source: String, target:String)
 case class CrawlerResponse(pages: List[Node], links: List[Link])
 

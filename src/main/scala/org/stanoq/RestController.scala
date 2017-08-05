@@ -19,7 +19,7 @@ object RestController extends App with CorsSupport {
 
   val config = ConfigFactory.load()
   val logger = Logging(system, getClass)
-  val crawlerService = new CrawlerService(system)
+  val crawlerService = new CrawlerService
   val versionService = new VersionService
   val angularRoute = pathPrefix("") {getFromResourceDirectory("webapp/dist") ~ getFromResource("webapp/dist/index.html")}
   val debug = pathPrefix("debug") { getFromBrowseableDirectories(".")}
