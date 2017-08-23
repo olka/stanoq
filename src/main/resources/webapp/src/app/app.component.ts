@@ -3,6 +3,9 @@ import {CrawlerService}from './crawler.service';
 import {Subscription} from 'rxjs/Subscription';
 import { TreeModel, NodeEvent } from 'ng2-tree';
 
+declare const alertify: any;
+
+declare var window: Window;
 
 @Component({
   selector: 'app-root',
@@ -42,7 +45,8 @@ export class AppComponent implements OnInit {
     }
 
    public logEvent(e: NodeEvent): void {
-    console.log(e);
+     window.open(String(e.node.node.id));
+     alertify.message(`${e.node.value}`);
   }
 
 }

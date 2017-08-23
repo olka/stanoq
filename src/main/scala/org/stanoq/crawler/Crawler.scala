@@ -20,18 +20,18 @@ class Crawler(config:ConfigProperties, cookie: Option[Cookie] = None){
   val logger = Logging(ActorSystem(), getClass)
   val visitedPages = new ConcurrentHashMap[Page,String].asScala
   val visitedSet = createSet[String]
-  val root: Page = new Page("", "ROOT",0,createSet[Page])
+  private val domain = getDomain(config.url)
+  val root: Page = new Page(domain, domain,0,createSet[Page])
 
   def process:Crawler = process("")
 
   def process(url: String) = {
-    logger.info("Processing " + config.getUrl + url)
-    crawl(config.getUrl + url, 0, root)
+    logger.info("Processing " + config.url + url)
+    crawl(config.url + url, 0, root)
     this
   }
 
   def getErrorPages = visitedPages.keySet.filter(_.statusCode!=200)
-  private def createSet[T] = java.util.Collections.newSetFromMap(new java.util.concurrent.ConcurrentHashMap[T, java.lang.Boolean]).asScala
 
   private def errorsCheck: Set[String] = {
     getErrorPages.map(_.url).toSet
@@ -57,7 +57,7 @@ class Crawler(config:ConfigProperties, cookie: Option[Cookie] = None){
       !(link.startsWith("#") || link.startsWith(".") || link.startsWith("mailto"))
     }
     val list = doc.select("a[href]").iterator().asScala.toStream.filter(predicate).map(l => l.attr("abs:href")).toList
-    list.filter(link => config.getExclusions.filter(s => link.contains(s)).size==0 && link.contains(config.getDomain))
+    list.filter(link => config.exclusions.filter(s => link.contains(s)).size==0 && link.contains(domain))
   }
 
   private def writeToFile(filename: String, slist: java.util.Collection[String]) = Try(Files.write(Paths.get(filename), slist, StandardCharsets.UTF_8, APPEND, CREATE))

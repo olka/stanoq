@@ -1,13 +1,8 @@
 package org.stanoq.tests.crawler
 
-import akka.event.NoLogging
-import akka.http.scaladsl.model.ContentTypes._
-import akka.http.scaladsl.model.StatusCodes._
-import akka.http.scaladsl.testkit.ScalatestRouteTest
 import org.scalatest._
-import org.stanoq.crawler.{Crawler, CrawlerService}
-import org.stanoq.crawler.model.{ConfigProperties, CrawlerProtocols}
-import spray.json._
+import org.stanoq.crawler.Crawler
+import org.stanoq.crawler.model.ConfigProperties
 
 class CrawlerSpec extends FlatSpec with Matchers {
 
@@ -28,9 +23,9 @@ class CrawlerSpec extends FlatSpec with Matchers {
   }
 
   "Crawler" should "be able convert to node" in {
-    val crawler = new Crawler(ConfigProperties("https://www.websocket.org/echo.html", 2)).process
+    val crawler = new Crawler(ConfigProperties("https://www.websocket.org/echo.html", 4)).process
     crawler.root.convertToNode.children.size shouldBe 1
-    crawler.root.print shouldBe crawler.root.convertToNode
+    crawler.root.convertToNode.getChildCount-1 shouldBe crawler.visitedPages.size
   }
 
 }

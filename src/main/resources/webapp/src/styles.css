@@ -55,6 +55,7 @@
 
 tree-internal ul {
   padding: 3px 0 3px 25px;
+  text-align: left;
 }
 
 tree-internal li {
@@ -147,7 +148,7 @@ tree-internal .tree .folding.node-expanded:before {
 
 tree-internal .tree .folding.node-empty {
   color: #212121;
-  text-align: center;
+  text-align: left;
   font-size: 0.89em;
 }
 
@@ -158,7 +159,7 @@ tree-internal .tree .folding.node-empty:before {
 
 tree-internal .tree .folding.node-leaf {
   color: #212121;
-  text-align: center;
+  text-align: left;
   font-size: 0.89em;
 }
 

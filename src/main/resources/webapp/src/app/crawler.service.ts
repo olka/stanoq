@@ -8,44 +8,8 @@ import { TreeModel } from 'ng2-tree';
 export class CrawlerService {
 private versionURL = 'http://localhost:9000/version';
 private crawlerURL = 'http://localhost:9000/crawler';
-oldData = {
-    pages:
-        [ {id: 'start', label: 'start', title: 'test' },
-        { id: '1', label: 'Query ThreatConnect' },
-        { id: '2', label: 'Query XForce' },
-        { id: '3', label: 'Format Results' },
-        { id: '4', label: 'Search Splunk' },
-        { id: '5', label: 'Block LDAP' },
-        { id: '6', label: 'Email Results' } ],
-    links:
-        [ { source: 'start', target: '1', label: 'links to' },
-        { source: 'start', target: '2' },
-        { source: '1', target: '3', label: 'related to' },
-        { source: '2', target: '4' },
-        { source: '2', target: '6' },
-        { source: '3', target: '5' }]}
 
-public data: TreeModel = {
-    value: 'Programming languages by programming paradigm',
-    children: [
-    {
-        value: 'Object-oriented programming',
-        children: [
-            {value: 'Java'},
-            {value: 'C++'},
-            {value: 'C#'}
-        ]
-    },
-    {
-        value: 'Prototype-based programming',
-            children: [
-            {value: 'JavaScript'},
-            {value: 'CoffeeScript'},
-            {value: 'Lua'}
-            ]
-    }
-    ]
-    };
+data: TreeModel = {value: 'Set website name by pressing right button', id: ''};
 private dataProvider = new BehaviorSubject(this.data);
 dataProviderObservable = this.dataProvider.asObservable();
 private spinnerProvider = new BehaviorSubject(false);
