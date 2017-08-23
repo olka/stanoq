@@ -19,10 +19,9 @@ class CrawlerService() extends CrawlerProtocols {
       complete {
         val crawler = new Crawler(config).process
 //        Future {
-          def getId(url:String) = Math.abs(url.hashCode).toString
-          val nodes = crawler.visitedPages.map{case(page,url) => Node(getId(page.url),page.pageName.trim,page.statusCode)}.toList
-          val links = crawler.visitedPages.map{case(page,url) => Link(getId(url),getId(page.url))}.toList
-          val crawlerEntity = HttpEntity(ContentType(MediaTypes.`application/json`), CrawlerResponse(nodes,links).toJson.toString())
+        val root:Node = crawler.root.convertToNode
+
+        val crawlerEntity = HttpEntity(ContentType(MediaTypes.`application/json`), root.toJson.toString())
           HttpResponse(StatusCodes.OK, entity = crawlerEntity)
 //        }
       }

@@ -12,7 +12,6 @@ import org.jsoup.{Connection, HttpStatusException, Jsoup}
 import org.stanoq.crawler.model.{ConfigProperties, Page}
 
 import scala.collection.JavaConverters._
-import scala.collection.mutable
 import scala.util.Try
 
 case class Cookie(key: String, value:String)
@@ -21,12 +20,12 @@ class Crawler(config:ConfigProperties, cookie: Option[Cookie] = None){
   val logger = Logging(ActorSystem(), getClass)
   val visitedPages = new ConcurrentHashMap[Page,String].asScala
   val visitedSet = createSet[String]
+  val root: Page = new Page("", "ROOT",0,createSet[Page])
 
   def process:Crawler = process("")
 
   def process(url: String) = {
     logger.info("Processing " + config.getUrl + url)
-    val root: Page = new Page(config.getUrl, "ROOT",0)
     crawl(config.getUrl + url, 0, root)
     this
   }
@@ -43,8 +42,9 @@ class Crawler(config:ConfigProperties, cookie: Option[Cookie] = None){
   private def crawl(url: String, depth: Int, prev: Page) {
     if (!visitedSet.add(url) || !visitedSet.add(url.substring(0,url.length-1)) || depth > config.depthLimit) return
     val doc: Document = getDocument(url,prev) getOrElse (return)
-    val page = new Page(url, doc.title(), 200)
+    val page = new Page(url, doc.title(), 200,createSet[Page])
     visitedPages.put(page,prev.url)
+    prev.addChild(page)
 //    logger.info(visitedPages.size + " : " + url + " " + doc.get.title + " d:"+depth)
     val links = parseLinksToVisit(doc)
 //    logger.info(url + " "+links.size)
@@ -65,7 +65,11 @@ class Crawler(config:ConfigProperties, cookie: Option[Cookie] = None){
   private def getDocument(url: String, prev:Page): Option[Document] = {
     def getDocument(con: Connection) = if (cookie.isEmpty) Some(con.get) else Some(con.cookie(cookie.get.key, cookie.get.value).get)
     (Try(Jsoup.connect(url).timeout(30 * 1000)).map(getDocument).recover {
-      case e: HttpStatusException => logger.error(e.getStatusCode + " :: on " + url);visitedPages.put(new Page(url,e.getMessage,e.getStatusCode),prev.url);None
-      case e: Exception => logger.error(e.getMessage);visitedPages.put(new Page(url,e.getMessage,0),prev.url);None}).get
+      case e: HttpStatusException => logger.error(e.getStatusCode + " :: on " + url);
+        prev.addChild(new Page(url,e.getMessage,e.getStatusCode,createSet[Page]));
+        visitedPages.put(new Page(url,e.getMessage,e.getStatusCode,null),prev.url);
+        None
+      case e: Exception => logger.error(e.getMessage);visitedPages.put(new Page(url,e.getMessage,0,null),prev.url);None}
+      ).get
   }
 }
