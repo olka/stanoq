@@ -20,9 +20,8 @@ case class ConfigProperties(url:String, depthLimit:Int, timeout:Long=5, exclusio
 }
 
 case class Node(value: String, children:Option[List[Node]], id:String){
-  override def toString() = value + " ||"
-  def print:String = toString() + children.get.map(_.print).mkString
-  def getChildCount:Int = 1+children.get.map(_.getChildCount).sum
+  def print:String = if (children.isEmpty) value else value + children.get.map(_.getChildCount).mkString //FIXME
+  def getChildCount:Int = if (children.isEmpty) 1 else 1 + children.get.map(_.getChildCount).sum //FIXME
 }
 
 trait CrawlerProtocols extends SprayJsonSupport with DefaultJsonProtocol {

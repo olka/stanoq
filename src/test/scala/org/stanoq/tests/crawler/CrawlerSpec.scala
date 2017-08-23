@@ -12,9 +12,9 @@ class CrawlerSpec extends FlatSpec with Matchers {
     crawler.getErrorPages.size shouldBe 0
   }
 
-  "Crawler" should "respond with >9 processed pages on crawling facebook with depth 1" in {
+  "Crawler" should "respond with >5 processed pages on crawling facebook with depth 1" in {
     val crawler = new Crawler(ConfigProperties("https://facebook.com", 1)).process
-    crawler.visitedPages.size should be >9
+    crawler.visitedPages.size should be >5
   }
 
   "Crawler" should "handle recursive page structure" in {
@@ -24,6 +24,7 @@ class CrawlerSpec extends FlatSpec with Matchers {
 
   "Crawler" should "be able convert to node" in {
     val crawler = new Crawler(ConfigProperties("https://www.websocket.org/echo.html", 4)).process
+    crawler.root.convertToNode.print
     crawler.root.convertToNode.children.size shouldBe 1
     crawler.root.convertToNode.getChildCount-1 shouldBe crawler.visitedPages.size
   }

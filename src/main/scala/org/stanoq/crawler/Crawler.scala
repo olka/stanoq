@@ -67,9 +67,6 @@ class Crawler(config:ConfigProperties, cookie: Option[Cookie] = None){
     (Try(Jsoup.connect(url).timeout(30 * 1000)).map(getDocument).recover {
       case e: HttpStatusException => logger.error(e.getStatusCode + " :: on " + url);
         prev.addChild(new Page(url,e.getMessage,e.getStatusCode,createSet[Page]));
-        visitedPages.put(new Page(url,e.getMessage,e.getStatusCode,null),prev.url);
-        None
-      case e: Exception => logger.error(e.getMessage);visitedPages.put(new Page(url,e.getMessage,0,null),prev.url);None}
-      ).get
+        visitedPages.put(new Page(url,e.getMessage,e.getStatusCode,null),prev.url);None}).get
   }
 }

@@ -24,5 +24,8 @@ libraryDependencies ++= {
   )
 }
 
-val test = project.in(file(".")).enablePlugins(GatlingPlugin)
-Revolver.settings
+coverageMinimum := 85
+coverageFailOnMinimum := true
+coverageEnabled := true
+parallelExecution in Test := true
+coverageExcludedPackages := "org.stanoq.CorsSupport.*;org.stanoq.RestController.*"

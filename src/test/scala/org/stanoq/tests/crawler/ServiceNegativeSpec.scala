@@ -1,7 +1,5 @@
 package org.stanoq.tests.crawler
 
-import akka.event.Logging.LoggerInitialized
-import akka.event.NoLogging
 import akka.http.scaladsl.server.ValidationRejection
 import akka.http.scaladsl.testkit.ScalatestRouteTest
 import org.scalatest._

@@ -27,13 +27,11 @@ class ServiceSpec extends FlatSpec with Matchers with ScalatestRouteTest with Cr
     }
   }
 
-  "CrawlerService" should "respond with >20 processed pages on crawling websocket.org with depth 4" in {
-    Post(s"/crawler", ConfigProperties("https://www.websocket.org/index.html",4)) ~> crawlerService.route ~> check {
+  "CrawlerService" should "respond with >25 processed pages on crawling websocket.org with depth 3" in {
+    Post(s"/crawler", ConfigProperties("https://www.websocket.org/index.html",3)) ~> crawlerService.route ~> check {
       status shouldBe OK
       contentType shouldBe `application/json`
-//      val res = responseAs[CrawlerResponse]
-//      res.pages.size should be >20
-//      res.pages.filter(_.statusCode!=200).size shouldBe 2
+      responseAs[Node].getChildCount should be >25
     }
   }
 }
