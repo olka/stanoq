@@ -4,6 +4,7 @@ version := "1.0"
 scalaVersion := "2.11.8"
 
 scalacOptions := Seq("-unchecked", "-deprecation", "-encoding", "utf8")
+enablePlugins(JavaAppPackaging)
 
 libraryDependencies ++= {
   val akkaV       = "2.4.16"
