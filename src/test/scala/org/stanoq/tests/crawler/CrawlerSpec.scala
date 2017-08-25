@@ -31,9 +31,8 @@ class CrawlerSpec extends FlatSpec with Matchers {
 
   "Crawler" should "properly process gatling.io" in {
     val crawler = new Crawler(ConfigProperties("http://gatling.io", 1)).process
-    println(crawler.visitedSet)
     println(crawler.root.convertToNode.print)
-    crawler.visitedSet.size shouldBe 55
+    crawler.visitedSet.size shouldBe 41
   }
 
 }

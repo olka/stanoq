@@ -20,7 +20,7 @@ class Crawler(config:ConfigProperties, cookie: Option[Cookie] = None){
   val logger = Logging(ActorSystem(), getClass)
   val visitedSet = createSet[String]
   private val domain = getDomain(config.url)
-  val root: Page = new Page(domain, domain,0,createSet[Page])
+  val root: Page = new Page(domain, domain,0,createSet[Page])   //problem with stack!
 
   def process:Crawler = process("")
 
@@ -32,15 +32,15 @@ class Crawler(config:ConfigProperties, cookie: Option[Cookie] = None){
 
 //  private def errorsCheck: Set[String] = getErrorPages.map(_.url).toSet   errorPages.filter(page => getDocument(page.url,null).isEmpty).map(_.url).toSet
 
-  private def crawl(url: String, depth: Int, prev: Page) {
-    if (!visitedSet.add(url) || !visitedSet.add(url.substring(0,url.length-1)) || depth > config.depthLimit) return
-    val doc: Document = getDocument(url,prev) getOrElse (return)
-    val page = new Page(url, doc.title(), 200,createSet[Page])
+  private def crawl(url: String, depth: Int, prev: Page) {//FIXME!!!
+    if (!visitedSet.add(url)  || !visitedSet.add(url.substring(0,url.length-1)) || depth > config.depthLimit) return
+    val page = new Page(url, "doc.title()", 200,createSet[Page])
     prev.addChild(page)
+    val doc: Document = getDocument(url,prev) getOrElse (return)
+
 //    logger.info(visitedPages.size + " : " + url + " " + doc.get.title + " d:"+depth)
     val links = parseLinksToVisit(doc)
 //    logger.info(url + " "+links.size)
-    println("SET SIZE: "+visitedSet.size)
     links.foreach(link => crawl(link, depth + 1, page))
   }
 
