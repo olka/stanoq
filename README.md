@@ -4,7 +4,6 @@
 STANoQ
 
 ng build --prod --aot --build-optimizer
-ng github-pages:deploy
 
 TODO:
 1) Deployment process
