@@ -19,24 +19,13 @@
             <div class="sk-circle11 sk-circle"></div>
             <div class="sk-circle12 sk-circle"></div>
         </div>
-        <tree [tree]="data" (nodeSelected)="logEvent($event)" *ngIf="!isSpinnerVisible"></tree>
+        <tree [tree]="data" (nodeSelected)="logEvent($event)" (nodeRenamed)="renamedEvent($event)" *ngIf="!isSpinnerVisible"></tree>
     </div>
 </div>
-<h2>Here are some links to help you start: </h2>
-<ul>
-    <li>
-        <button (click)="getVersion()">Get Version</button>
-    </li>
-    <li> Version: {{version}}</li>
-</ul>
-
 <ul>
     <li>
         <button (click)="getSiteTree()">Get site tree</button>
     </li>
-    <li> Links: {{data.links | json}}</li>
-    <li> Pages: {{data | json}}</li>
-    <li> ERR: {{error}}</li>
 </ul>
 
 

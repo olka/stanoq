@@ -1,7 +1,7 @@
 import { Component, OnInit, ViewEncapsulation } from '@angular/core';
 import {CrawlerService}from './crawler.service';
 import {Subscription} from 'rxjs/Subscription';
-import { TreeModel, NodeEvent } from 'ng2-tree';
+import { TreeModel, NodeEvent, NodeRenamedEvent } from 'ng2-tree';
 
 declare const alertify: any;
 
@@ -41,11 +41,17 @@ export class AppComponent implements OnInit {
     }
 
     getSiteTree(){
-        this.service.getSiteTree("")
+        console.log(this.data.value)
+        this.service.getSiteTree(String(this.data.value))
     }
 
    public logEvent(e: NodeEvent): void {
      window.open(String(e.node.node.id));
+     alertify.message(`${e.node.value}`);
+  }
+
+  public renamedEvent(e: NodeRenamedEvent): void {
+     this.data.value = e.newValue;
      alertify.message(`${e.node.value}`);
   }
 

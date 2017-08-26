@@ -6,10 +6,10 @@ import { TreeModel } from 'ng2-tree';
 
 @Injectable()
 export class CrawlerService {
-private versionURL = 'http://localhost:9000/version';
-private crawlerURL = 'http://localhost:9000/crawler';
+private versionURL = 'https://stanoq.herokuapp.com/version';
+private crawlerURL = 'https://stanoq.herokuapp.com/crawler';
 
-data: TreeModel = {value: 'Set website name by pressing right button', id: ''};
+data: TreeModel = {value: 'http://gatling.io', id: ''};
 private dataProvider = new BehaviorSubject(this.data);
 dataProviderObservable = this.dataProvider.asObservable();
 private spinnerProvider = new BehaviorSubject(false);
@@ -22,20 +22,21 @@ constructor(private http: HttpClient) { }
       .catch(this.handleError);
     }
 
-    postRequest() {
+    postRequest(url:String, depth:number) {
         const headers = new HttpHeaders({ 'Content-Type': 'application/json' });
+        console.log('posting:: '+url)
         const data = {
-                      "url": "https://www.websocket.org/echo.html",
-                      "depthLimit": 3,
+                      "url": url,
+                      "depthLimit": depth,
                       "timeout": 5,
                       "exclusions": ["test1","test2"]
                     }
         return this.http.post(this.crawlerURL, JSON.stringify(data), { headers: headers }).toPromise().catch(this.handleError);
   }
 
-    getSiteTree(json: String) {
+    getSiteTree(url: String) {
         this.spinnerProvider.next(true);
-        return this.postRequest().then(data => {this.spinnerProvider.next(false);console.log(data);this.dataProvider.next(data);}).catch(error => {console.error(error);});
+        return this.postRequest(url, 3).then(data => {this.spinnerProvider.next(false);console.log(data);this.dataProvider.next(data);}).catch(error => {console.error(error);});
     }
 
     private handleError(error: any): Promise<any> {

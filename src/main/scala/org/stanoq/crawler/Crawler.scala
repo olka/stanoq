@@ -41,7 +41,7 @@ class Crawler(config:ConfigProperties, cookie: Option[Cookie] = None){
     logger.info(url + " "+links.size)
     if(depth > config.depthLimit) return
     doc = null
-    links.foreach(link => crawl(link, depth + 1, page))
+    links.par.foreach(link => crawl(link, depth + 1, page))
   }
 
   private def parseLinksToVisit(doc: Document): List[String] ={

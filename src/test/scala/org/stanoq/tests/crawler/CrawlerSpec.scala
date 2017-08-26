@@ -12,14 +12,14 @@ class CrawlerSpec extends FlatSpec with Matchers {
   }
 
   "Crawler" should "properly process gatling.io" in {
-    val crawler = new Crawler(ConfigProperties("http://gatling.io", 4)).process
-    crawler.visitedPages.size shouldBe 70
+    val crawler = new Crawler(ConfigProperties("http://gatling.io", 2)).process
+    crawler.visitedPages.size should be >=40
   }
 
   "Crawler" should "properly process https://www.websocket.org" in {
     val crawler = new Crawler(ConfigProperties("https://www.websocket.org", 20)).process
     crawler.root.convertToNode.getChildCount-1 shouldBe crawler.visitedPages.size
-    crawler.visitedPages.size shouldBe 58
+    crawler.visitedPages.size should be >=58
   }
 
 }
