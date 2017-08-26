@@ -3,26 +3,30 @@
     <h1>
         {{title}}
     </h1>
-    <div style="float: right;">
-        <button class="button" (click)="getSiteTree()">Go</button>
-    </div>
-    <div style="max-width: 1000px; margin: 0 auto; border: solid 1px #ccc;">
-        <div class="sk-fading-circle" *ngIf="isSpinnerVisible">
-            <div class="sk-circle1 sk-circle"></div>
-            <div class="sk-circle2 sk-circle"></div>
-            <div class="sk-circle3 sk-circle"></div>
-            <div class="sk-circle4 sk-circle"></div>
-            <div class="sk-circle5 sk-circle"></div>
-            <div class="sk-circle6 sk-circle"></div>
-            <div class="sk-circle7 sk-circle"></div>
-            <div class="sk-circle8 sk-circle"></div>
-            <div class="sk-circle9 sk-circle"></div>
-            <div class="sk-circle10 sk-circle"></div>
-            <div class="sk-circle11 sk-circle"></div>
-            <div class="sk-circle12 sk-circle"></div>
+    <div class="main-content">
+        <div class="controls-box">
+            <div class="input-box">
+                <input class="input" #domain (keyup)="0" value="http://" (keyup.enter)="getSiteTree(domain.value)">
+            </div>
+            <button class="button" type="submit" (click)="getSiteTree(domain.value)">Go</button>
         </div>
-
-        <tree [tree]="data" (nodeSelected)="logEvent($event)" (nodeRenamed)="renamedEvent($event)" *ngIf="!isSpinnerVisible"></tree>
+        <div class="tree-box">
+            <div class="sk-fading-circle" *ngIf="isSpinnerVisible">
+                <div class="sk-circle1 sk-circle"></div>
+                <div class="sk-circle2 sk-circle"></div>
+                <div class="sk-circle3 sk-circle"></div>
+                <div class="sk-circle4 sk-circle"></div>
+                <div class="sk-circle5 sk-circle"></div>
+                <div class="sk-circle6 sk-circle"></div>
+                <div class="sk-circle7 sk-circle"></div>
+                <div class="sk-circle8 sk-circle"></div>
+                <div class="sk-circle9 sk-circle"></div>
+                <div class="sk-circle10 sk-circle"></div>
+                <div class="sk-circle11 sk-circle"></div>
+                <div class="sk-circle12 sk-circle"></div>
+            </div>
+            <tree [tree]="data" (nodeSelected)="logEvent($event)" (nodeRenamed)="renamedEvent($event)" *ngIf="!isSpinnerVisible"></tree>
+        </div>
     </div>
 </div>
 

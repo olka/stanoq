@@ -35,8 +35,7 @@
     }
   },
   "styles": [
-    "styles.css",
-    "../node_modules/@swimlane/ngx-charts/release/ngx-charts.css"
+    "styles.css"
   ],
   "lint": [
     {

@@ -1,4 +1,6 @@
 /* You can add global styles to this file, and also import other style files */
+@import '~font-awesome/css/font-awesome.css';
+
 .node-menu {
   position: relative;
   width: 150px;
@@ -74,6 +76,7 @@ tree-internal .over-drop-target {
 tree-internal .tree {
   box-sizing: border-box;
   font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
+  margin: 0;
 }
 
 tree-internal .tree li {
@@ -109,10 +112,12 @@ tree-internal .tree .node-left-menu {
   display: inline-block;
   height: 100%;
   width: auto;
+  font: normal normal normal 18px/1 FontAwesome;
+  vertical-align: middle;
 }
 
 tree-internal .tree .node-left-menu span:before {
-  content: '\2026';
+  content: '\f0c9';
   color: #757575;
 }
 

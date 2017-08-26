@@ -9,7 +9,27 @@ export class CrawlerService {
 private versionURL = 'https://stanoq.herokuapp.com/version';
 private crawlerURL = 'https://stanoq.herokuapp.com/crawler';
 
-data: TreeModel = {value: 'http://gatling.io', id: ''};
+data: TreeModel = {
+value: 'Programming languages by programming paradigm',
+children: [
+{
+value: 'Object-oriented programming',
+children: [
+{value: 'Java'},
+{value: 'C++'},
+{value: 'C#'}
+]
+},
+{
+value: 'Prototype-based programming',
+children: [
+{value: 'JavaScript'},
+{value: 'CoffeeScript'},
+{value: 'Lua'}
+]
+}
+]
+};
 private dataProvider = new BehaviorSubject(this.data);
 dataProviderObservable = this.dataProvider.asObservable();
 private spinnerProvider = new BehaviorSubject(false);

@@ -19,6 +19,7 @@ export class AppComponent implements OnInit {
   isSpinnerVisible:any;
   dataSub:Subscription;
   data: TreeModel;
+  domain: string;
   error = {};
 
   constructor(private service: CrawlerService) {
@@ -40,13 +41,13 @@ export class AppComponent implements OnInit {
         this.service.getVersion().then(data => this.version = data.version).catch(error => this.error = error);
     }
 
-    getSiteTree(){
-        console.log(this.data.value)
-        this.service.getSiteTree(String(this.data.value))
+    getSiteTree(domain:string){
+        console.log(domain)
+        this.service.getSiteTree(String(domain))
     }
 
    public logEvent(e: NodeEvent): void {
-     window.open(String(e.node.node.id));
+     //window.open(String(e.node.node.id));
      alertify.message(`${e.node.value}`);
   }
 

@@ -107,15 +107,80 @@
   40% {
     opacity: 1; } }
 
-.button {
+.main-content {
+    border: solid 1px #ccc;
+    padding: 40px 20px;
+    max-width: 1000px;
+    margin: 0 auto;
+}
+
+.main-content:after {
+   content: " ";
+   visibility: hidden;
+   display: block;
+   height: 0;
+   clear: both;
+}
+
+.controls-box {
+    float: left;
+    width: 40%;
+    text-align: left;
+    font-size: 0;
+    letter-spacing: -0.36em;
+}
+
+.controls-box .input-box {
+    display: inline-block;
+    vertical-align: middle;
+    width: 63%;
+    font-size: 18px;
+    letter-spacing: 0;
+    box-sizing: border-box;
+    padding-right: 10px;
+}
+
+.controls-box .input {
+    padding: 10px 10px;
+    border-radius: 6px;
+    border: solid 1px #ccc;
+    width: 100%;
+    font-size: 18px;
+    box-sizing: border-box;
+}
+
+.controls-box .input:focus {
+   border-color: #008CBA;
+   outline: none;
+}
+
+.controls-box .button {
     background-color: #008CBA;
     border: none;
     border-radius: 6px;
     color: white;
-    width: 110px;
-    padding: 19px 1px;
+    width: 30%;
+    padding: 10px 1px;
     text-align: center;
     text-decoration: none;
     display: inline-block;
+    vertical-align: middle;
     font-size: 18px;
+    cursor: pointer;
+    font-size: 18px;
+    letter-spacing: 0;
+    box-sizing: border-box;
+}
+
+.controls-box .button:active {
+    box-shadow: -1px -1px 4px -1px #fff inset;
+}
+
+.tree-box {
+    float: right;
+    width: 60%;
+}
+
+.tree-box .tree {
+    margin: 0;
 }
