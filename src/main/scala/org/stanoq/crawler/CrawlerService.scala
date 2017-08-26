@@ -12,18 +12,17 @@ import scala.concurrent.Future
 
 class CrawlerService() extends CrawlerProtocols {
 
-//  implicit val blockingDispatcher:ExecutionContext = system.dispatchers.lookup("blocking-dispatcher")
+  implicit val blockingDispatcher: ExecutionContext = ActorSystem().dispatchers.lookup("blocking-dispatcher")
 
   def handleCrawlerRequest(config: ConfigProperties) = {
     validate(config.validate, "Config wasn't properly set!") {
       complete {
         val crawler = new Crawler(config).process
-//        Future {
-        val root:Node = crawler.root.convertToNode
-
-        val crawlerEntity = HttpEntity(ContentType(MediaTypes.`application/json`), root.toJson.toString())
+        Future {
+          val root: Node = crawler.root.convertToNode
+          val crawlerEntity = HttpEntity(ContentType(MediaTypes.`application/json`), root.toJson.toString())
           HttpResponse(StatusCodes.OK, entity = crawlerEntity)
-//        }
+        }
       }
     }
   }

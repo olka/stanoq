@@ -5,6 +5,7 @@ import java.net.{URI, URISyntaxException, URL}
 import akka.http.scaladsl.marshallers.sprayjson.SprayJsonSupport
 import spray.json.{DefaultJsonProtocol, JsonFormat, RootJsonFormat}
 
+import scala.collection.mutable.Set
 import scala.util.Try
 
 case class ConfigProperties(url:String, depthLimit:Int, timeout:Long=5, exclusions:List[String]=List(",")) {
@@ -17,11 +18,18 @@ case class ConfigProperties(url:String, depthLimit:Int, timeout:Long=5, exclusio
     else if (Try(new URL(url).getContent).isFailure) false
     else true
   }
+
+  def getDomain: String = Try(new URI(url).getHost).get
+}
+
+case class Page(url: String, pageName: String, statusCode: Int, children:Set[Page]){
+  def addChild(page: Page) = children.add(page)
+  def print:String = url + children.map(_.print).mkString
+  def convertToNode:Node = Node(s"$pageName : $statusCode",if(children.size>0)Some(children.map(_.convertToNode).toList) else None,url)
 }
 
 case class Node(value: String, children:Option[List[Node]], id:String){
-  def print:String = if (children.isEmpty) value else value + children.get.map(_.getChildCount).mkString //FIXME
-  def getChildCount:Int = if (children.isEmpty) 1 else 1 + children.get.map(_.getChildCount).sum //FIXME
+  def getChildCount:Int = if (children.isEmpty) 1 else 1 + children.get.map(_.getChildCount).sum
 }
 
 trait CrawlerProtocols extends SprayJsonSupport with DefaultJsonProtocol {
