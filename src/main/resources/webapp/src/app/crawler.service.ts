@@ -23,7 +23,7 @@ constructor(private http: HttpClient) { }
     }
 
     postRequest(url:String, depth:number) {
-        const headers = new HttpHeaders({ 'Content-Type': 'application/json' });
+        const headers = new HttpHeaders({ "Content-Type": "application/json; charset=UTF-8" });
         console.log('posting:: '+url)
         const data = {
                       "url": url,

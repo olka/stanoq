@@ -1,9 +1,11 @@
 <!--The content below is only a placeholder and can be replaced.-->
 <div style="text-align:center">
     <h1>
-        Welcome to {{title}}!
+        {{title}}
     </h1>
-
+    <div style="float: right;">
+        <button class="button" (click)="getSiteTree()">Go</button>
+    </div>
     <div style="max-width: 1000px; margin: 0 auto; border: solid 1px #ccc;">
         <div class="sk-fading-circle" *ngIf="isSpinnerVisible">
             <div class="sk-circle1 sk-circle"></div>
@@ -19,13 +21,9 @@
             <div class="sk-circle11 sk-circle"></div>
             <div class="sk-circle12 sk-circle"></div>
         </div>
+
         <tree [tree]="data" (nodeSelected)="logEvent($event)" (nodeRenamed)="renamedEvent($event)" *ngIf="!isSpinnerVisible"></tree>
     </div>
 </div>
-<ul>
-    <li>
-        <button (click)="getSiteTree()">Get site tree</button>
-    </li>
-</ul>
 
 

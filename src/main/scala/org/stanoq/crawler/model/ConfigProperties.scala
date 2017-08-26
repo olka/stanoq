@@ -12,10 +12,12 @@ case class ConfigProperties(url:String, depthLimit:Int, timeout:Long=5, exclusio
   require(url != null, "Config wasn't properly set!")
 
   def validate = {
+    def validateUrl = Try(new URL(if(url.contains("http")) url else "http://"+url).getContent).isFailure
+
     if (depthLimit <0) false
     else if (timeout <0) false
     else if (url.equals("")) false
-    else if (Try(new URL(url).getContent).isFailure) false
+    else if (validateUrl) false
     else true
   }
 

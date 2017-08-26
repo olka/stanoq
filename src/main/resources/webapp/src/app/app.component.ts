@@ -13,7 +13,7 @@ declare var window: Window;
   styleUrls: ['./app.component.css']
 })
 export class AppComponent implements OnInit {
-  title = 'stanoq';
+  title = 'Site tree generator';
   version:any;
   spinnerSub:Subscription;
   isSpinnerVisible:any;
