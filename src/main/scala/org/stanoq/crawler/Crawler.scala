@@ -28,6 +28,7 @@ class Crawler(config:ConfigProperties, cookie: Option[Cookie] = None){
   def process(url: String) = {
     logger.info("Processing " + config.url + url)
     crawl(config.url + url, 1, root)
+    root.statusCode = 200
     this
   }
 
