@@ -1,22 +1,18 @@
 package org.stanoq.stream
 import akka.NotUsed
-import akka.actor.{ActorSystem, Cancellable}
-import akka.http.scaladsl.Http
+import akka.actor.{ActorSystem}
 import akka.http.scaladsl.common.{EntityStreamingSupport, JsonEntityStreamingSupport}
-import akka.http.scaladsl.model.HttpEntity.{ChunkStreamPart, Chunked}
 import akka.http.scaladsl.model._
 import akka.http.scaladsl.server.Directives._
 import akka.stream.{OverflowStrategy, ThrottleMode}
 import akka.stream.impl.Stages.DefaultAttributes
-import akka.stream.scaladsl.{Flow, Source, SourceQueueWithComplete}
-import com.sun.xml.internal.ws.api.Cancelable
+import akka.stream.scaladsl.{Flow, Source}
 
 import scala.concurrent.duration._
 import org.stanoq.crawler.Crawler
 import org.stanoq.crawler.model.{ConfigProperties, CrawlerProtocols, Node}
 import spray.json._
 
-import scala.collection.immutable.IndexedSeq
 import scala.concurrent.{ExecutionContext, Future}
 
 class StreamService extends CrawlerProtocols{
@@ -25,7 +21,7 @@ class StreamService extends CrawlerProtocols{
   implicit val jsonStreamingSupport: JsonEntityStreamingSupport = EntityStreamingSupport.json().withParallelMarshalling(parallelism = 8, unordered = false)
 
   def getNodes: Source[Node, NotUsed] = {
-    val crawler =  new Crawler(ConfigProperties("https://www.websocket.org/index.html", 1))
+    val crawler =  new Crawler(ConfigProperties("https://www.websocket.org/index.html", 5))
     Future{crawler.process}
     def pageRoot = crawler.root
     def root = pageRoot.convertToNode
@@ -36,11 +32,12 @@ class StreamService extends CrawlerProtocols{
 
     val throttlingFlow = Flow[Node].throttle(
       elements = 1,
-      per = 100.millis,
+      per = 200.millis,
       maximumBurst = 0,
       mode = ThrottleMode.Shaping
     )
-
+//val crawlerEntity = HttpEntity(ContentType(MediaTypes.`application/json`), root.toJson.toString())
+//    HttpResponse(StatusCodes.OK, entity = crawlerEntity)
     source.via(throttlingFlow)
   }
 
