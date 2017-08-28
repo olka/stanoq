@@ -1,10 +1,8 @@
 package org.stanoq.crawler
 
 import akka.actor.ActorSystem
-import akka.event.LoggingAdapter
 import akka.http.scaladsl.model._
 import akka.http.scaladsl.server.Directives._
-import akka.stream.scaladsl.Source
 import org.stanoq.crawler.model._
 import spray.json._
 

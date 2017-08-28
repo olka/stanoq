@@ -25,7 +25,7 @@ object RestController extends App with CorsSupport {
   val angularRoute = pathPrefix("") {getFromResourceDirectory("webapp/dist") ~ getFromResource("webapp/dist/index.html")}
   val debug = pathPrefix("debug") { getFromBrowseableDirectories(".")}
 
-  val routes = crawlerService.route ~ versionService.route ~streamService.route ~ angularRoute ~ debug
+  val routes = crawlerService.route ~ versionService.route ~ streamService.route ~ angularRoute ~ debug
   val loggedRoutes = DebuggingDirectives.logRequestResult("INFO:", Logging.InfoLevel)(routes)
 
 

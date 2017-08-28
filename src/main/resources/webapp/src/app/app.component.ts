@@ -4,7 +4,6 @@ import {Subscription} from 'rxjs/Subscription';
 import { TreeModel, NodeEvent, NodeRenamedEvent } from 'ng2-tree';
 
 declare const alertify: any;
-
 declare var window: Window;
 
 @Component({
@@ -15,7 +14,6 @@ declare var window: Window;
 export class AppComponent implements OnInit {
   title = 'Site tree generator';
   version:any;
-  spinnerSub:Subscription;
   isSpinnerVisible:any;
   dataSub:Subscription;
   data: TreeModel;
@@ -27,13 +25,10 @@ export class AppComponent implements OnInit {
     }
 
     ngOnInit() {
-        console.log('init')
-        this.spinnerSub = this.service.spinnerProviderObservable.subscribe(spinner => this.isSpinnerVisible = spinner)
         this.dataSub = this.service.dataProviderObservable.subscribe(data => this.data = data)
     }
 
     ngOnDestroy() {
-        this.spinnerSub.unsubscribe();
         this.dataSub.unsubscribe();
     }
 
