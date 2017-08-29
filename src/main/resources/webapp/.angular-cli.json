@@ -1,7 +1,7 @@
 {
   "$schema": "./node_modules/@angular/cli/lib/config/schema.json",
   "project": {
-    "name": "webapp"
+    "name": "stanoq"
   },
   "apps": [
     {
@@ -21,7 +21,10 @@
       "styles": [
         "styles.css"
       ],
-      "scripts": [],
+      "scripts": [
+        "../node_modules/echarts/dist/echarts.min.js",
+        "../node_modules/oboe/dist/oboe-browser.min.js"
+      ],
       "environmentSource": "environments/environment.ts",
       "environments": {
         "dev": "environments/environment.ts",

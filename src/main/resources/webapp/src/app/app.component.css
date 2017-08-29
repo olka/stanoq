@@ -184,3 +184,7 @@
 .tree-box .tree {
     margin: 0;
 }
+
+.demo-chart {
+  height: 450px;
+}

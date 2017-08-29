@@ -10,9 +10,10 @@ declare var oboe: any;
 
 @Injectable()
 export class CrawlerService {
-private host = 'https://stanoq.herokuapp.com'
+private host = 'http://localhost:9000'//'https://stanoq.herokuapp.com'
 private versionURL = this.host + '/version';
-private crawlerURL = this.host + '/crawlerStream';
+private echartcrawlerURL = this.host + '/crawlerStreamEchart';
+private crawlerURL = this.echartcrawlerURL//this.host + '/crawlerStream';
 
 data: TreeModel = {
 value: 'Programming languages by programming paradigm',
@@ -41,15 +42,23 @@ children: [
 }
 ]
 };
+options: any = this.getOptions(
+        {"nodes": [{"name": "555", "value": "10" }, { "name": '777', "value": 15}, { "name": "3", "value": "20"},{ "name": "8", "value": "20"}],
+        "links": [{"source":"555", "target":"777"},{"source":"3", "target":"8"},{"source":"8", "target":"555"}]}
+    )
 
 dataProvider = new BehaviorSubject(this.data);
+graphProvider = new BehaviorSubject(this.options);
 dataSub: Subscription;
+graphSub: Subscription;
 dataProviderObservable = this.dataProvider.asObservable();
+graphObservable = this.graphProvider.asObservable();
 private oboeService: any;
 
 
 constructor(private http: HttpClient) {
     this.dataSub = this.dataProviderObservable.subscribe(data => this.data = data)
+    this.graphSub = this.dataProviderObservable.subscribe(opts => this.options = opts)
 }
 
   getVersion() {
@@ -82,20 +91,38 @@ constructor(private http: HttpClient) {
 
     getSiteTree(url: String) {
         var emitter = new EventEmitter();
-        this.oboeService = oboe(this.getOboeConfig(url, 3));
+        this.oboeService = oboe(this.getOboeConfig(url, 5));
         this.data = this.oboeService
             .node('!.*', function(el){
+                console.log(el);
                 emitter.emit(el);
             })
             .fail(function(errorReport) {
                 console.log(errorReport);
         });
-        emitter.subscribe(el => this.dataProvider.next(el));
+        //emitter.subscribe(el => this.dataProvider.next(el));
+        emitter.subscribe(el => this.graphProvider.next(this.getOptions(el)));
         return emitter;
     }
 
     private handleError(error: any): Promise<any> {
         console.error('An error occurred', error);
         return Promise.reject(error.message || error);
+    }
+
+    getOptions(data: any){
+                console.log("getOptions "+data)
+                console.log(data.nodes)
+                console.log(data.links)
+        return {
+            series: [{
+                type: 'graph',
+                layout: 'circular',
+                animation: true,
+                data: data.nodes,
+                categories: [{}],
+                edges: data.links
+        }]
+        };
     }
 }

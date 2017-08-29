@@ -6,6 +6,7 @@ import { AppComponent } from './app.component';
 import { CrawlerService } from './crawler.service';
 import { HttpClientModule } from '@angular/common/http';
 import { TreeModule } from 'ng2-tree';
+import { AngularEchartsModule } from 'ngx-echarts';
 
 @NgModule({
   declarations: [
@@ -15,7 +16,8 @@ import { TreeModule } from 'ng2-tree';
     BrowserModule, HttpClientModule,
     FormsModule,
     BrowserAnimationsModule,
-    TreeModule
+    TreeModule,
+    AngularEchartsModule
   ],
   providers: [CrawlerService],
   bootstrap: [AppComponent]

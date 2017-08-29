@@ -9,6 +9,7 @@
                 <input class="input" #domain (keyup)="0" value="http://" (keyup.enter)="getSiteTree(domain.value)">
             </div>
             <button class="button" type="submit" (click)="getSiteTree(domain.value)">Go</button>
+            <div echarts [options]="chartOption" class="demo-chart"></div>
         </div>
         <div class="tree-box">
             <div class="sk-fading-circle" *ngIf="isSpinnerVisible">
