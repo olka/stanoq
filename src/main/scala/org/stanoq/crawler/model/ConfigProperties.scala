@@ -32,7 +32,7 @@ case class Page(url: String, pageName: String, var statusCode: Int, children:Set
   def parse:List[(EchartNode,List[EchartLink])] = {
     def getTuple:(EchartNode,List[EchartLink]) = {
       def abs(str:String) = (Math.abs(str.hashCode)).toString
-      (EchartNode(abs(url),url,""), children.map(p => EchartLink(abs(url),abs(p.url))).toList)}
+      (EchartNode(url,abs(url),""), children.map(p => EchartLink(url,p.url)).toList)}
     getTuple :: children.flatMap(_.parse).toList
   }
 }
