@@ -19,44 +19,32 @@ class StreamService extends CrawlerProtocols{
   implicit val jsonStreamingSupport: JsonEntityStreamingSupport = EntityStreamingSupport.json().withParallelMarshalling(parallelism = 8, unordered = false)
 
   def getNodes(config:ConfigProperties) = {
-    val crawler =  new Crawler(config)
-    Future{crawler.process}
-    def pageRoot = crawler.root
+    def pageRoot = getRoot(config)
     def root = pageRoot.convertToNode
     val source = {
-      def next(node:Node) = if(pageRoot.statusCode == 200) None else Some((root, root))
+      def next(node: Node) = if (pageRoot.statusCode == 200) None else Some((root, root))
       Source.unfold(root)(next).withAttributes(DefaultAttributes.delayInitial)
     }
-
-    val throttlingFlow = Flow[Node].throttle(
-      elements = 1,
-      per = 200.millis,
-      maximumBurst = 0,
-      mode = ThrottleMode.Shaping
-    )
-    complete(source.via(throttlingFlow))
+    complete(source.via(getThrottlingFlow[Node]))
   }
 
-
   def getEchartNodes(config:ConfigProperties) = {
-    val crawler =  new Crawler(config)
-    Future{crawler.process}
-    def pageRoot = crawler.root
-    def root = pageRoot.parse
+    def pageRoot = getRoot(config)
+    def root = getRoot(config).parse
     val source = {
       def echartResp = EchartResponse(root.map(_._1),root.flatMap(_._2))
       def next(node:EchartResponse) = if(pageRoot.statusCode == 200) {println(echartResp.toJson.toString());None} else Some((echartResp,echartResp))
       Source.unfold(echartResp)(next)
     }
-
-    val throttlingFlow = Flow[EchartResponse].throttle(
-      elements = 1,
-      per = 200.millis,
-      maximumBurst = 0,
-      mode = ThrottleMode.Shaping
-    )
-    complete(source.via(throttlingFlow))
+    complete(source.via(getThrottlingFlow[EchartResponse]))
   }
+
+  def getRoot(config:ConfigProperties) =  {
+    val crawler =  new Crawler(config)
+    Future{crawler.process}
+    crawler.root
+  }
+  def getThrottlingFlow[T] = Flow[T].throttle(elements = 1, per = 200.millis, maximumBurst = 0, mode = ThrottleMode.Shaping)
 
   val route =
     pathPrefix("crawlerStream") {
@@ -69,18 +57,4 @@ class StreamService extends CrawlerProtocols{
           (post & entity(as[ConfigProperties])) (getEchartNodes)
         }
       }
-
-//
-//  val AcceptJson = Accept(MediaRange(MediaTypes.`application/json`))
-//  val AcceptXml = Accept(MediaRange(MediaTypes.`text/xml`))
-//
-//  Get("/tweets").withHeaders(AcceptJson) ~> route ~> check {
-//    responseAs[String] shouldEqual
-//      """[""" +
-//        """{"uid":1,"txt":"#Akka rocks!"},""" +
-//        """{"uid":2,"txt":"Streaming is so hot right now!"},""" +
-//        """{"uid":3,"txt":"You cannot enter the same river twice."}""" +
-//        """]"""
-//  }
-
 }
