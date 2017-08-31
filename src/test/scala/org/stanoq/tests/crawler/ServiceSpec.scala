@@ -3,12 +3,13 @@ package org.stanoq.tests.crawler
 import akka.event.NoLogging
 import akka.http.scaladsl.model.ContentTypes._
 import akka.http.scaladsl.model.StatusCodes._
-import akka.http.scaladsl.testkit.ScalatestRouteTest
+import akka.http.scaladsl.testkit.{RouteTestTimeout, ScalatestRouteTest}
 import org.scalatest._
 import org.stanoq.crawler.CrawlerService
 import org.stanoq.crawler.model.{ConfigProperties, CrawlerProtocols, Node}
 import org.stanoq.stream.StreamService
 import spray.json._
+import scala.concurrent.duration._
 
 import scala.io.Source
 
@@ -16,6 +17,7 @@ class ServiceSpec extends AsyncFlatSpec with Matchers with ScalatestRouteTest wi
   override def testConfigSource = "akka.loglevel = DEBUG"
   def config = testConfig
   val logger = NoLogging
+  implicit val timeout = RouteTestTimeout(5.seconds)
 
   val crawlerService = new CrawlerService
   val streamService = new StreamService
@@ -28,7 +30,7 @@ class ServiceSpec extends AsyncFlatSpec with Matchers with ScalatestRouteTest wi
       responseAs[Node].getChildCount should be >=20
     }
   }
-//todo: Mock
+
   "CrawlerService" should "handle crawlerStream endpoint properly" in {
       Post(s"/crawlerStream", configJson.parseJson.convertTo[ConfigProperties]) ~> streamService.route ~> check {
       status shouldBe OK

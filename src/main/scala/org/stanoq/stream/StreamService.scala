@@ -19,7 +19,9 @@ class StreamService extends CrawlerProtocols{
   implicit val jsonStreamingSupport: JsonEntityStreamingSupport = EntityStreamingSupport.json().withParallelMarshalling(parallelism = 8, unordered = false)
 
   def getNodes(config:ConfigProperties) = {
-    def pageRoot = getRoot(config)
+    val crawler = new Crawler(config)
+    Future {crawler.process}
+    def pageRoot = crawler.root
     def root = pageRoot.convertToNode
     val source = {
       def next(node: Node) = if (pageRoot.statusCode == 200) None else Some((root, root))
@@ -29,21 +31,19 @@ class StreamService extends CrawlerProtocols{
   }
 
   def getEchartNodes(config:ConfigProperties) = {
-    def pageRoot = getRoot(config)
-    def root = getRoot(config).parse
+    val crawler =  new Crawler(config)
+    Future{crawler.process}
+    def pageRoot = crawler.root
+    def root = pageRoot.parse
     val source = {
       def echartResp = EchartResponse(root.map(_._1),root.flatMap(_._2))
       def next(node:EchartResponse) = if(pageRoot.statusCode == 200) {println(echartResp.toJson.toString());None} else Some((echartResp,echartResp))
       Source.unfold(echartResp)(next)
     }
+
     complete(source.via(getThrottlingFlow[EchartResponse]))
   }
 
-  def getRoot(config:ConfigProperties) =  {
-    val crawler =  new Crawler(config)
-    Future{crawler.process}
-    crawler.root
-  }
   def getThrottlingFlow[T] = Flow[T].throttle(elements = 1, per = 200.millis, maximumBurst = 0, mode = ThrottleMode.Shaping)
 
   val route =
