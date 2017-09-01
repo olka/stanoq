@@ -22,6 +22,7 @@ TODO:
        parselinks - 100 ms
    crawler4j or self-written crawler?
 3) Extract modules (UI, backend?)
-4) ReactJS to support plugin system
+4) VueJS
+5) remove font awesome
 
 

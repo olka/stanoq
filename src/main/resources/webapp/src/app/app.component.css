@@ -124,7 +124,7 @@
 
 .controls-box {
     float: left;
-    width: 40%;
+    width: 45%;
     text-align: left;
     font-size: 0;
     letter-spacing: -0.36em;
@@ -178,7 +178,7 @@
 
 .tree-box {
     float: right;
-    width: 60%;
+    width: 55%;
 }
 
 .tree-box .tree {
@@ -186,5 +186,9 @@
 }
 
 .demo-chart {
-  height: 450px;
+  height: 500px;
+}
+
+.demo-chart > div {
+  overflow: visible !important;
 }

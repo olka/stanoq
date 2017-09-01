@@ -12,8 +12,7 @@ declare var oboe: any;
 export class CrawlerService {
 private host = 'http://localhost:9000'//'https://stanoq.herokuapp.com'
 private versionURL = this.host + '/version';
-private echartcrawlerURL = this.host + '/crawlerStreamEchart';
-private crawlerURL = this.echartcrawlerURL//this.host + '/crawlerStream';
+private crawlerURL = this.host + '/crawlerStream';
 
 data: TreeModel = {
 value: 'Programming languages by programming paradigm',
@@ -79,9 +78,7 @@ constructor(private http: HttpClient) {
         var config = {
             'url': this.crawlerURL,
             method: "POST",
-            headers: {
-                    'Content-Type': 'application/json',
-                    'Content-Length': data.length},
+            headers: {'Content-Type': 'application/json'},
             body: data,
             cached: false,
             withCredentials: false
@@ -90,19 +87,21 @@ constructor(private http: HttpClient) {
   }
 
     getSiteTree(url: String) {
-        var emitter = new EventEmitter();
-        this.oboeService = oboe(this.getOboeConfig(url, 5));
+        var echartEmitter = new EventEmitter();
+        var treeEmitter = new EventEmitter();
+        this.oboeService = oboe(this.getOboeConfig(url, 3));
         this.data = this.oboeService
             .node('!.*', function(el){
                 console.log(el);
-                emitter.emit(el);
+                echartEmitter.emit(el.echart);
+                treeEmitter.emit(el.node);
             })
             .fail(function(errorReport) {
                 console.log(errorReport);
         });
-        //emitter.subscribe(el => this.dataProvider.next(el));
-        emitter.subscribe(el => this.graphProvider.next(this.getOptions(el)));
-        return emitter;
+        treeEmitter.subscribe(el => this.dataProvider.next(el));
+        echartEmitter.subscribe(el => this.graphProvider.next(this.getOptions(el)));
+        return treeEmitter;
     }
 
     private handleError(error: any): Promise<any> {
@@ -118,10 +117,30 @@ constructor(private http: HttpClient) {
             series: [{
                 type: 'graph',
                 layout: 'circular',
+                focusNodeAdjacency: true,
+                legendHoverLink: true,
+                hoverAnimation:true,
                 animation: true,
                 data: data.nodes,
+                edges: data.links,
+                roam: true,
                 categories: [{}],
-                edges: data.links
+                label: {
+                    emphasis: {
+                        position: 'right',
+                        show: true
+                    },
+                    normal: {
+                        position: 'right',
+                        formatter: '{b}'
+                    }
+                },
+                lineStyle: {
+                    normal: {
+                        color: 'source',
+                        curveness: 0.01
+                    }
+                }
         }]
         };
     }

@@ -50,7 +50,6 @@ class Crawler(config:ConfigProperties, cookie: Option[Cookie] = None){
     doc.select("a").iterator().asScala.toStream.map(_.attr("abs:href")).filter(predicate).toList
   }
 
-  private def writeToFile(filename: String, slist: java.util.Collection[String]) = Try(Files.write(Paths.get(filename), slist, StandardCharsets.UTF_8, APPEND, CREATE))
   private def createSet[T] = Collections.newSetFromMap(new ConcurrentHashMap[T, java.lang.Boolean]).asScala
 
   private def getDocument(url: String, prev:Page): Option[Document] = {

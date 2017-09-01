@@ -5,12 +5,13 @@ import akka.http.scaladsl.model.ContentTypes._
 import akka.http.scaladsl.model.StatusCodes._
 import akka.http.scaladsl.testkit.{RouteTestTimeout, ScalatestRouteTest}
 import org.scalatest._
+import org.scalatest.concurrent.{Eventually, IntegrationPatience}
 import org.stanoq.crawler.CrawlerService
-import org.stanoq.crawler.model.{ConfigProperties, CrawlerProtocols, Node}
+import org.stanoq.crawler.model._
 import org.stanoq.stream.StreamService
 import spray.json._
-import scala.concurrent.duration._
 
+import scala.concurrent.duration._
 import scala.io.Source
 
 class ServiceSpec extends AsyncFlatSpec with Matchers with ScalatestRouteTest with CrawlerProtocols {
@@ -35,13 +36,9 @@ class ServiceSpec extends AsyncFlatSpec with Matchers with ScalatestRouteTest wi
       Post(s"/crawlerStream", configJson.parseJson.convertTo[ConfigProperties]) ~> streamService.route ~> check {
       status shouldBe OK
       contentType shouldBe `application/json`
-    }
-  }
-
-  "CrawlerService" should "handle crawlerStreamEchart endpoint properly" in {
-    Post(s"/crawlerStreamEchart", configJson.parseJson.convertTo[ConfigProperties]) ~> streamService.route ~> check {
-      status shouldBe OK
-      contentType shouldBe `application/json`
+      val res =  responseAs[Seq[CrawlerResponse]]
+      res.size should be > 2
+      res(res.size-1).node.value should include ("websocket")
     }
   }
 }

@@ -9,7 +9,7 @@ import spray.json._
 
 import scala.concurrent.duration._
 import org.stanoq.crawler.Crawler
-import org.stanoq.crawler.model.{ConfigProperties, CrawlerProtocols, EchartResponse, Node}
+import org.stanoq.crawler.model._
 
 import scala.concurrent.{ExecutionContext, Future}
 
@@ -18,30 +18,18 @@ class StreamService extends CrawlerProtocols{
   implicit val blockingDispatcher: ExecutionContext = ActorSystem().dispatchers.lookup("blocking-dispatcher")
   implicit val jsonStreamingSupport: JsonEntityStreamingSupport = EntityStreamingSupport.json().withParallelMarshalling(parallelism = 8, unordered = false)
 
-  def getNodes(config:ConfigProperties) = {
+  def getResponse(config:ConfigProperties) = {
     val crawler = new Crawler(config)
     Future {crawler.process}
     def pageRoot = crawler.root
-    def root = pageRoot.convertToNode
+    def echartRoot = pageRoot.parse
+    def node = pageRoot.convertToNode
     val source = {
-      def next(node: Node) = if (pageRoot.statusCode == 200) None else Some((root, root))
-      Source.unfold(root)(next).withAttributes(DefaultAttributes.delayInitial)
+      def response = CrawlerResponse(node,(echartRoot.map(_._1),echartRoot.flatMap(_._2)))
+      def next(node: CrawlerResponse) = if (pageRoot.statusCode == 200) None else Some((response, response))
+      Source.unfold(response)(next).withAttributes(DefaultAttributes.delayInitial)
     }
-    complete(source.via(getThrottlingFlow[Node]))
-  }
-
-  def getEchartNodes(config:ConfigProperties) = {
-    val crawler =  new Crawler(config)
-    Future{crawler.process}
-    def pageRoot = crawler.root
-    def root = pageRoot.parse
-    val source = {
-      def echartResp = EchartResponse(root.map(_._1),root.flatMap(_._2))
-      def next(node:EchartResponse) = if(pageRoot.statusCode == 200) {println(echartResp.toJson.toString());None} else Some((echartResp,echartResp))
-      Source.unfold(echartResp)(next)
-    }
-
-    complete(source.via(getThrottlingFlow[EchartResponse]))
+    complete(source.via(getThrottlingFlow[CrawlerResponse]))
   }
 
   def getThrottlingFlow[T] = Flow[T].throttle(elements = 1, per = 200.millis, maximumBurst = 0, mode = ThrottleMode.Shaping)
@@ -49,12 +37,7 @@ class StreamService extends CrawlerProtocols{
   val route =
     pathPrefix("crawlerStream") {
       pathEnd {
-        (post & entity(as[ConfigProperties])) (getNodes)
+        (post & entity(as[ConfigProperties])) (getResponse)
       }
-    }~
-      pathPrefix("crawlerStreamEchart") {
-        pathEnd {
-          (post & entity(as[ConfigProperties])) (getEchartNodes)
-        }
-      }
+    }
 }
