@@ -27,5 +27,12 @@ TODO:
 6) Mock tests
 7) remove overhead payload in stream endpoint
 8) UI performance optimization
+9) mongo DB + caching
+10) Session management and https://jwt.io
+11) performance metrics
+12) Crawling process as akka actor
+13) UI improvements (overflow, css, layouts)
+14) integrate gatling into build process
+15) compress payload
 
 

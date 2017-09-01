@@ -38,8 +38,8 @@ class ServiceSpec extends AsyncFlatSpec with Matchers with ScalatestRouteTest wi
       contentType shouldBe `application/json`
       val res =  responseAs[Seq[CrawlerResponse]]
       eventually {
-        res.size should be > 2
-        res(res.size - 1).node.value should include("websocket")
+        res.size should be > 0
+        res.head.node.value should include("websocket")
       }
     }
   }
