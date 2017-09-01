@@ -14,7 +14,7 @@ import spray.json._
 import scala.concurrent.duration._
 import scala.io.Source
 
-class ServiceSpec extends AsyncFlatSpec with Matchers with ScalatestRouteTest with CrawlerProtocols {
+class ServiceSpec extends AsyncFlatSpec with Matchers with ScalatestRouteTest with CrawlerProtocols with Eventually {
   override def testConfigSource = "akka.loglevel = DEBUG"
   def config = testConfig
   val logger = NoLogging
@@ -37,8 +37,10 @@ class ServiceSpec extends AsyncFlatSpec with Matchers with ScalatestRouteTest wi
       status shouldBe OK
       contentType shouldBe `application/json`
       val res =  responseAs[Seq[CrawlerResponse]]
-      res.size should be > 2
-      res(res.size-1).node.value should include ("websocket")
+      eventually {
+        res.size should be > 2
+        res(res.size - 1).node.value should include("websocket")
+      }
     }
   }
 }
