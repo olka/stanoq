@@ -36,10 +36,9 @@ class ServiceSpec extends AsyncFlatSpec with Matchers with ScalatestRouteTest wi
       Post(s"/crawlerStream", configJson.parseJson.convertTo[ConfigProperties]) ~> streamService.route ~> check {
       status shouldBe OK
       contentType shouldBe `application/json`
-      val res =  responseAs[Seq[CrawlerResponse]]
       eventually {
-        res.size should be > 0
-        res.head.node.value should include("websocket")
+        responseAs[Seq[CrawlerResponse]].size should be > 0
+        responseAs[Seq[CrawlerResponse]].head.node.value should include("websocket")
       }
     }
   }

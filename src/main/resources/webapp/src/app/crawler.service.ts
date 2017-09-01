@@ -10,7 +10,7 @@ declare var oboe: any;
 
 @Injectable()
 export class CrawlerService {
-private host = 'http://localhost:9000'//'https://stanoq.herokuapp.com'
+private host = 'https://stanoq.herokuapp.com'
 private versionURL = this.host + '/version';
 private crawlerURL = this.host + '/crawlerStream';
 
@@ -42,8 +42,8 @@ children: [
 ]
 };
 options: any = this.getOptions(
-        {"nodes": [{"name": "555", "value": "10" }, { "name": '777', "value": 15}, { "name": "3", "value": "20"},{ "name": "8", "value": "20"}],
-        "links": [{"source":"555", "target":"777"},{"source":"3", "target":"8"},{"source":"8", "target":"555"}]}
+        {"nodes": [{"name": "1", "value": "10" }, { "name": '2', "value": 15}, { "name": "3", "value": "20"},{ "name": "4", "value": "20"}],
+        "links": [{"source":"1", "target":"2"},{"source":"3", "target":"4"},{"source":"4", "target":"1"}]}
     )
 
 dataProvider = new BehaviorSubject(this.data);
@@ -92,7 +92,6 @@ constructor(private http: HttpClient) {
         this.oboeService = oboe(this.getOboeConfig(url, 3));
         this.data = this.oboeService
             .node('!.*', function(el){
-                console.log(el);
                 echartEmitter.emit(el.echart);
                 treeEmitter.emit(el.node);
             })
@@ -110,9 +109,6 @@ constructor(private http: HttpClient) {
     }
 
     getOptions(data: any){
-                console.log("getOptions "+data)
-                console.log(data.nodes)
-                console.log(data.links)
         return {
             series: [{
                 type: 'graph',

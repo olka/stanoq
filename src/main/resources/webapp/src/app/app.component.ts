@@ -42,9 +42,6 @@ export class AppComponent implements OnInit {
     }
 
     getSiteTree(domain:string){
-        console.log(domain)
-        console.log(this.dataset)
-        this.chartOption = this.chartOption2
         this.service.getSiteTree(String(domain))
     }
 
@@ -57,16 +54,4 @@ export class AppComponent implements OnInit {
      this.data.value = e.newValue;
      alertify.message(`${e.node.value}`);
   }
-
-chartOption2 = {
-   series: [{
-            type: 'graph',
-            layout: 'circular',
-            animation: true,
-            data: [{name: '333', value: 10 }, { name: '444', value: 15}, { name: 3, value: 20},{ name: 8, value: 20}],
-            categories: [{}],
-            edges: [{source:'333', target:'444'},{source:'3', target:'8'},{source:'8', target:'333'}]
-        }]
-        }
-
 }
