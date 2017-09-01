@@ -24,5 +24,8 @@ TODO:
 3) Extract modules (UI, backend?)
 4) VueJS
 5) remove font awesome
+6) Mock tests
+7) remove overhead payload in stream endpoint
+8) UI performance optimization
 
 

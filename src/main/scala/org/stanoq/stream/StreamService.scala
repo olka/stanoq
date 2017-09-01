@@ -32,7 +32,7 @@ class StreamService extends CrawlerProtocols{
     complete(source.via(getThrottlingFlow[CrawlerResponse]))
   }
 
-  def getThrottlingFlow[T] = Flow[T].throttle(elements = 1, per = 200.millis, maximumBurst = 0, mode = ThrottleMode.Shaping)
+  def getThrottlingFlow[T] = Flow[T].throttle(elements = 1, per = 600.millis, maximumBurst = 0, mode = ThrottleMode.Shaping)
 
   val route =
     pathPrefix("crawlerStream") {

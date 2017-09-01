@@ -14,7 +14,7 @@ import spray.json._
 import scala.concurrent.duration._
 import scala.io.Source
 
-class ServiceSpec extends AsyncFlatSpec with Matchers with ScalatestRouteTest with CrawlerProtocols with Eventually {
+class ServiceSpec extends AsyncFlatSpec with Matchers with ScalatestRouteTest with CrawlerProtocols with Eventually with IntegrationPatience{
   override def testConfigSource = "akka.loglevel = DEBUG"
   def config = testConfig
   val logger = NoLogging
