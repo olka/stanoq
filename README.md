@@ -20,6 +20,7 @@ TODO:
        recursion - stack size
        getdocument 100-400ms
        parselinks - 100 ms
+       emiters load browser! MEMORY LEAK on emiter
    crawler4j or self-written crawler?
 3) Extract modules (UI, backend?)
 4) VueJS
