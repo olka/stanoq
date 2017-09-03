@@ -89,7 +89,7 @@ constructor(private http: HttpClient) {
     getSiteTree(url: String) {
         var echartEmitter = new EventEmitter();
         var treeEmitter = new EventEmitter();
-        this.oboeService = oboe(this.getOboeConfig(url, 5));
+        this.oboeService = oboe(this.getOboeConfig(url, 10));
         this.data = this.oboeService
             .node('echart', function(el){
                 echartEmitter.emit(el);
