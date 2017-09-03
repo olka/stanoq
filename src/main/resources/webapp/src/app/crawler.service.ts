@@ -10,7 +10,7 @@ declare var oboe: any;
 
 @Injectable()
 export class CrawlerService {
-private host = 'https://stanoq.herokuapp.com'
+private host = 'http://localhost:9000'//'https://stanoq.herokuapp.com'
 private versionURL = this.host + '/version';
 private crawlerURL = this.host + '/crawlerStream';
 
@@ -91,16 +91,20 @@ constructor(private http: HttpClient) {
         var treeEmitter = new EventEmitter();
         this.oboeService = oboe(this.getOboeConfig(url, 5));
         this.data = this.oboeService
-            .node('!.*', function(el){
-                echartEmitter.emit(el.echart);
-                treeEmitter.emit(el.node);
+            .node('echart', function(el){
+                echartEmitter.emit(el);
+                return null;
+            })
+            .node('node', function(el){
+                treeEmitter.emit(el);
+                return null;
             })
             .fail(function(errorReport) {
                 console.log(errorReport);
         });
         treeEmitter.subscribe(el => this.dataProvider.next(el));
         echartEmitter.subscribe(el => this.graphProvider.next(this.getOptions(el)));
-        return treeEmitter;
+        return null;
     }
 
     private handleError(error: any): Promise<any> {
