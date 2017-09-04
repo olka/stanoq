@@ -20,7 +20,6 @@ TODO:
        recursion - stack size
        getdocument 100-400ms
        parselinks - 100 ms
-       emiters load browser! MEMORY LEAK on emiter
    crawler4j or self-written crawler?
 3) Extract modules (UI, backend?)
 4) VueJS
@@ -32,7 +31,7 @@ TODO:
 10) Session management and https://jwt.io
 11) performance metrics
 12) Crawling process as akka actor
-13) UI improvements (overflow, css, layouts)
+13) UI improvements (overflow, css, layouts, mobile UI)
 14) integrate gatling into build process
 15) compress payload
 

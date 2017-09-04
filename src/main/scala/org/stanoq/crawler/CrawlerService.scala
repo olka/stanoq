@@ -1,6 +1,7 @@
 package org.stanoq.crawler
 
 import akka.actor.ActorSystem
+import akka.http.scaladsl.marshalling.ToResponseMarshallable
 import akka.http.scaladsl.model._
 import akka.http.scaladsl.server.Directives._
 import org.stanoq.crawler.model._
@@ -26,10 +27,15 @@ class CrawlerService() extends CrawlerProtocols {
     }
   }
 
-  val route = pathPrefix("crawler") {
-    pathEnd {
-      (post & entity(as[ConfigProperties])) (handleCrawlerRequest)
+  def persist(node: Node) = {
+    complete {
+      println(node);
+      HttpResponse(StatusCodes.Created)
     }
   }
 
+  val route = pathPrefix("crawler") {
+    pathEnd {(post & entity(as[ConfigProperties])) (handleCrawlerRequest)} ~
+    pathPrefix("persist") { pathEnd { (post & entity(as[Node])) (persist)}}
+  }
 }

@@ -1,1 +1,1 @@
-web: target/universal/stage/bin/stanoq -Dhttp.port=${PORT}
+web: target/universal/stage/bin/stanoq -Dhttp.port=${PORT} -Dmongo.url=${MONGODB_URI}
