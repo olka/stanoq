@@ -28,7 +28,6 @@ object RestController extends App with CorsSupport {
   val routes = crawlerService.route ~ versionService.route ~ streamService.route ~ angularRoute ~ debug
   val loggedRoutes = DebuggingDirectives.logRequestResult("INFO:", Logging.InfoLevel)(routes)
 
-
   val bindingFuture = Http().bindAndHandle(corsHandler(routes), config.getString("http.interface"), config.getInt("http.port"))
   bindingFuture.map(_.localAddress).map(addr => s"Bound to $addr").foreach(log.info)
   sys.addShutdownHook(system.terminate())

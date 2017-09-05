@@ -42,4 +42,10 @@ class ServiceSpec extends AsyncFlatSpec with Matchers with ScalatestRouteTest wi
 //      }
     }
   }
+
+  "Node" should "be printable" in {
+    val node = Node("test",None,"0")
+    println(node.toJson.toString())
+    node.toString.length should be >0
+  }
 }

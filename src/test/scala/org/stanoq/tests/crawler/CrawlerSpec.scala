@@ -2,7 +2,8 @@ package org.stanoq.tests.crawler
 
 import org.scalatest._
 import org.stanoq.crawler.Crawler
-import org.stanoq.crawler.model.ConfigProperties
+import spray.json._
+import org.stanoq.crawler.model.{ConfigProperties, Node}
 
 class CrawlerSpec extends FlatSpec with Matchers {
 
