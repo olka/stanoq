@@ -1,23 +1,18 @@
 package org.stanoq.crawler
 
-import java.nio.charset.StandardCharsets
-import java.nio.file.StandardOpenOption._
-import java.nio.file.{Files, Paths}
 import java.util.Collections
 import java.util.concurrent.ConcurrentHashMap
 
 import akka.actor.ActorSystem
 import akka.event.Logging
-import org.jsoup.nodes.{Document, Element}
+import org.jsoup.nodes.{Document}
 import org.jsoup.{Connection, HttpStatusException, Jsoup}
 import org.stanoq.crawler.model.{ConfigProperties, Page}
 
 import scala.collection.JavaConverters._
 import scala.util.Try
 
-case class Cookie(key: String, value:String)
-
-class Crawler(config:ConfigProperties, cookie: Option[Cookie] = None){
+class Crawler(config:ConfigProperties){
   val logger = Logging(ActorSystem(), getClass)
   val visitedPages = createSet[String]
   private val domain:String = config.getDomain
@@ -53,7 +48,7 @@ class Crawler(config:ConfigProperties, cookie: Option[Cookie] = None){
   private def createSet[T] = Collections.newSetFromMap(new ConcurrentHashMap[T, java.lang.Boolean]).asScala
 
   private def getDocument(url: String, prev:Page): Option[Document] = {
-    def getDocument(con: Connection) = if (cookie.isEmpty) Some(con.get) else Some(con.cookie(cookie.get.key, cookie.get.value).get)
+    def getDocument(con: Connection) = Some(con.get)
     (Try(Jsoup.connect(url).timeout(30 * 1000)).map(getDocument).recover {
       case e: HttpStatusException => logger.error(e.getStatusCode + " :: on " + url);
         prev.addChild(new Page(url,e.getMessage,e.getStatusCode,createSet[Page]));None

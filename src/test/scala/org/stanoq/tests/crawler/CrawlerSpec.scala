@@ -18,4 +18,9 @@ class CrawlerSpec extends FlatSpec with Matchers {
     crawler.root.convertToNode.getChildCount-1 shouldBe crawler.visitedPages.size
     crawler.visitedPages.size should be >=20
   }
+
+  "Crawler" should "handle wrong site page" in {
+    val crawler = new Crawler(ConfigProperties("http://gatl.tt", 1)).process
+    crawler.root.convertToNode.getChildCount-1 shouldBe crawler.visitedPages.size
+  }
 }
