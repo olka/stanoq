@@ -43,9 +43,29 @@ class ServiceSpec extends AsyncFlatSpec with Matchers with ScalatestRouteTest wi
     }
   }
 
-  "Node" should "be printable" in {
-    val node = Node("test",None,"0")
-    println(node.toJson.toString())
-    node.toString.length should be >0
+  "CrawlerService" should "persist Node" in {
+    Post(s"/persist",  Node("test",None,"0")) ~> crawlerService.route ~> check {
+      status shouldBe Created
+    }
+  }
+
+  "CrawlerService" should "getAll nodes" in {
+    Get(s"/getAll") ~> crawlerService.route ~> check {
+      status shouldBe OK
+      contentType shouldBe `application/json`
+      responseAs[Seq[Node]].head.value shouldBe "test"
+    }
+  }
+
+  "CrawlerService" should "delete node" in {
+    Delete(s"/delete",  Node("test",None,"0")) ~> crawlerService.route ~> check {
+      status shouldBe Gone
+    }
+
+    Get(s"/getAll") ~> crawlerService.route ~> check {
+      status shouldBe OK
+      contentType shouldBe `application/json`
+      responseAs[Seq[Node]].size shouldBe 0
+    }
   }
 }

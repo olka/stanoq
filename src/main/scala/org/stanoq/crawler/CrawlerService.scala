@@ -54,8 +54,16 @@ class CrawlerService() extends CrawlerProtocols {
     complete(HttpResponse(StatusCodes.OK, entity = HttpEntity(ContentType(MediaTypes.`application/json`), res.toList.toJson.toString())))
   }
 
+  def deleteNode(node:Node) = {
+    import org.mongodb.scala.model.Filters._
+    val collection: MongoCollection[Node] = database.getCollection("crawler")
+    val res = Await.result(collection.deleteOne(equal("id", node.id)).head(),Duration(10, TimeUnit.SECONDS))
+    complete{HttpResponse(StatusCodes.Gone)}
+  }
+
   val route =
-    pathPrefix("crawler") {pathEnd {(post & entity(as[ConfigProperties])) (handleCrawlerRequest)}}~
-    pathPrefix("persist") {pathEnd {(post & entity(as[Node]))             (persist)}}~
-    pathPrefix("getAll") {pathEnd  {(get)                                 (getAll)}}
+    pathPrefix("crawler") {pathEnd {(post & entity(as[ConfigProperties]))   (handleCrawlerRequest)}}~
+    pathPrefix("delete")  {pathEnd {(delete & entity(as[Node]))             (deleteNode)}}~
+    pathPrefix("persist") {pathEnd {(post & entity(as[Node]))               (persist)}}~
+    pathPrefix("getAll")  {pathEnd {(get)                                   (getAll)}}
 }
