@@ -7,7 +7,7 @@ import scala.concurrent.duration._
 
 class VersionLoadTest extends Simulation{
 
-  val httpConf = http.baseURL("http://stanoq.herokuapp.com").doNotTrackHeader("1")
+  val httpConf = http.baseURL("http://192.168.1.5:9000").doNotTrackHeader("1")
 
   val scn = scenario("Version simulation")
     .exec(http("Version test").get("/version").check(status.is(200)))

@@ -32,10 +32,8 @@ TODO:
 13) UI improvements (overflow, css, layouts, mobile UI)
 14) integrate gatling into build process
 15) compress payload
-16) measure performance on PI
 
-
-==============================Version===========================================
+==============================Heroku============================================
 ---- Global Information --------------------------------------------------------
 > request count                                       9000 (OK=9000   KO=0     )
 > min response time                                     97 (OK=97     KO=-     )
@@ -52,5 +50,28 @@ TODO:
 > 400 ms < t < 800 ms                                    3 (  0%)
 > t > 800 ms                                             0 (  0%)
 > failed                                                 0 (  0%)
+
+
+===============================PI===============================================
+---- Global Information --------------------------------------------------------
+> request count                                       9000 (OK=9000   KO=0     )
+> min response time                                     11 (OK=11     KO=-     )
+> max response time                                  29098 (OK=29098  KO=-     )
+> mean response time                                  2303 (OK=2303   KO=-     )
+> std deviation                                       4211 (OK=4211   KO=-     )
+> response time 50th percentile                        534 (OK=534    KO=-     )
+> response time 75th percentile                       1753 (OK=1753   KO=-     )
+> response time 90th percentile                       9248 (OK=9248   KO=-     )
+> response time 99th percentile                      17800 (OK=17800  KO=-     )
+> mean requests/sec                                147.541 (OK=147.541 KO=-     )
+---- Response Time Distribution ------------------------------------------------
+> t < 400 ms                                          3935 ( 44%)
+> 400 ms < t < 800 ms                                 1349 ( 15%)
+> t > 800 ms                                          3716 ( 41%)
+> failed                                                 0 (  0%)
+================================================================================
+
+vcgencmd measure_temp
+
 
 
