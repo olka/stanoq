@@ -23,10 +23,8 @@ TODO:
    crawler4j or self-written crawler?
 3) Extract modules (UI, backend?)
 4) VueJS
-5) remove font awesome
 6) Mock tests
 7) remove overhead payload in stream endpoint
-8) UI performance optimization
 9) mongo DB + caching
 10) Session management and https://jwt.io
 11) performance metrics
@@ -34,5 +32,25 @@ TODO:
 13) UI improvements (overflow, css, layouts, mobile UI)
 14) integrate gatling into build process
 15) compress payload
+16) measure performance on PI
+
+
+==============================Version===========================================
+---- Global Information --------------------------------------------------------
+> request count                                       9000 (OK=9000   KO=0     )
+> min response time                                     97 (OK=97     KO=-     )
+> max response time                                    453 (OK=453    KO=-     )
+> mean response time                                   124 (OK=124    KO=-     )
+> std deviation                                         35 (OK=35     KO=-     )
+> response time 50th percentile                        113 (OK=113    KO=-     )
+> response time 75th percentile                        122 (OK=122    KO=-     )
+> response time 90th percentile                        157 (OK=157    KO=-     )
+> response time 99th percentile                        265 (OK=265    KO=-     )
+> mean requests/sec                                    200 (OK=200    KO=-     )
+---- Response Time Distribution ------------------------------------------------
+> t < 400 ms                                          8997 (100%)
+> 400 ms < t < 800 ms                                    3 (  0%)
+> t > 800 ms                                             0 (  0%)
+> failed                                                 0 (  0%)
 
 

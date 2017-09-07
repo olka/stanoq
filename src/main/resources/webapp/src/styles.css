@@ -1,6 +1,4 @@
 /* You can add global styles to this file, and also import other style files */
-@import '~font-awesome/css/font-awesome.css';
-
 .node-menu {
   position: relative;
   width: 150px;
@@ -113,7 +111,6 @@ tree-internal .tree .node-left-menu {
   display: inline-block;
   height: 100%;
   width: auto;
-  font: normal normal normal 18px/1 FontAwesome;
   vertical-align: middle;
 }
 

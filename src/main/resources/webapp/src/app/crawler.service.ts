@@ -42,9 +42,22 @@ children: [
 ]
 };
 options: any = this.getOptions(
-        {"nodes": [{"name": "1", "value": "10" }, { "name": '2', "value": 15}, { "name": "3", "value": "20"},{ "name": "4", "value": "20"}],
-        "links": [{"source":"1", "target":"2"},{"source":"3", "target":"4"},{"source":"4", "target":"1"}]}
-    )
+{
+"nodes": [{
+"name": "1", "value": "10" }, {
+"name": '2', "value": 15}, {
+"name": "3", "value": "20"
+},{
+"name": "4", "value": "20"
+}],
+"links": [{
+"source":"1", "target":"2"
+},{"source":"3", "target":"4"
+},{
+"source":"4", "target":"1"
+}]
+}
+)
 
 dataProvider = new BehaviorSubject(this.data);
 graphProvider = new BehaviorSubject(this.options);
