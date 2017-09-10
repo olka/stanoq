@@ -9,7 +9,6 @@ ng build --prod --aot --build-optimizer
 TODO:
 1) Deployment process https://github.com/angular-buch/angular-cli-ghpages
 
-
     npm install --save-dev gh-pages
     then, in your package.json:
 
@@ -31,7 +30,6 @@ TODO:
 12) Crawling process as akka actor
 13) UI improvements (overflow, css, layouts, mobile UI)
 14) integrate gatling into build process
-15) compress payload
 
 ==============================Heroku============================================
 ---- Global Information --------------------------------------------------------
@@ -50,6 +48,24 @@ TODO:
 > 400 ms < t < 800 ms                                    3 (  0%)
 > t > 800 ms                                             0 (  0%)
 > failed                                                 0 (  0%)
+
+---- Global Information --------------------------------------------------------
+> request count                                       9000 (OK=9000   KO=0     )
+> min response time                                    102 (OK=102    KO=-     )
+> max response time                                   5205 (OK=5205   KO=-     )
+> mean response time                                   318 (OK=318    KO=-     )
+> std deviation                                        315 (OK=315    KO=-     )
+> response time 50th percentile                        240 (OK=240    KO=-     )
+> response time 75th percentile                        342 (OK=342    KO=-     )
+> response time 90th percentile                        485 (OK=485    KO=-     )
+> response time 99th percentile                       1651 (OK=1651   KO=-     )
+> mean requests/sec                                  187.5 (OK=187.5  KO=-     )
+---- Response Time Distribution ------------------------------------------------
+> t < 400 ms                                          7353 ( 82%)
+> 400 ms < t < 800 ms                                 1268 ( 14%)
+> t > 800 ms                                           379 (  4%)
+> failed                                                 0 (  0%)
+================================================================================
 
 
 ===============================PI===============================================

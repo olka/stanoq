@@ -29,7 +29,7 @@ class StreamService extends CrawlerProtocols{
       def next(node: CrawlerResponse) = if (pageRoot.statusCode == 200) None else Some((response, response))
       Source.unfold(response)(next).withAttributes(DefaultAttributes.delayInitial)
     }
-    complete(source.via(getThrottlingFlow[CrawlerResponse]))
+    encodeResponse(complete(source.via(getThrottlingFlow[CrawlerResponse])))
   }
 
   def getThrottlingFlow[T] = Flow[T].throttle(elements = 1, per = 450.millis, maximumBurst = 0, mode = ThrottleMode.Shaping)
