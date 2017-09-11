@@ -102,7 +102,7 @@ constructor(private http: HttpClient) {
     getSiteTree(url: String) {
         var echartEmitter = new EventEmitter();
         var treeEmitter = new EventEmitter();
-        this.oboeService = oboe(this.getOboeConfig(url, 6));
+        this.oboeService = oboe(this.getOboeConfig(url, 1));
         this.data = this.oboeService
             .node('echart', function(el){
                 echartEmitter.emit(el);
@@ -157,4 +157,28 @@ constructor(private http: HttpClient) {
         }]
         };
     }
+
+flatten(data) {
+    var result = {};
+    function recurse (cur, prop) {
+        if (Object(cur) !== cur) {
+            result[prop] = cur;
+        } else if (Array.isArray(cur)) {
+            for(var i=0, l=cur.length; i<l; i++)
+                recurse(cur[i], prop + "[" + i + "]");
+            if (l == 0)
+                result[prop] = [];
+        } else {
+            var isEmpty = true;
+            for (var p in cur) {
+                isEmpty = false;
+                recurse(cur[p], prop ? prop+"."+p : p);
+            }
+            if (isEmpty && prop)
+                result[prop] = {};
+        }
+    }
+    recurse(data, "");
+    return result;
+}
 }

@@ -26,7 +26,7 @@ class StreamService extends CrawlerProtocols{
     def node = pageRoot.convertToNode
     val source = {
       def response = CrawlerResponse(node,EchartResponse(echartRoot.map(_._1),echartRoot.flatMap(_._2)))
-      def next(node: CrawlerResponse) = if (pageRoot.statusCode == 200) None else Some((response, response))
+      def next(node: CrawlerResponse) = if (pageRoot.statusCode == 200) {println(response.toJson.toString);None} else Some((response, response))
       Source.unfold(response)(next).withAttributes(DefaultAttributes.delayInitial)
     }
     encodeResponse(complete(source.via(getThrottlingFlow[CrawlerResponse])))
