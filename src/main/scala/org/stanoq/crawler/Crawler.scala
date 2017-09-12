@@ -1,11 +1,11 @@
 package org.stanoq.crawler
 
 import java.util.Collections
-import java.util.concurrent.ConcurrentHashMap
+import java.util.concurrent.{ConcurrentHashMap, TimeUnit}
 
 import akka.actor.ActorSystem
 import akka.event.Logging
-import org.jsoup.nodes.{Document}
+import org.jsoup.nodes.Document
 import org.jsoup.{Connection, HttpStatusException, Jsoup}
 import org.stanoq.crawler.model.{ConfigProperties, Page}
 
@@ -48,8 +48,13 @@ class Crawler(config:ConfigProperties){
   private def createSet[T] = Collections.newSetFromMap(new ConcurrentHashMap[T, java.lang.Boolean]).asScala
 
   private def getDocument(url: String, prev:Page): Option[Document] = {
-    def getDocument(con: Connection) = Some(con.get)
-    (Try(Jsoup.connect(url).timeout(30 * 1000)).map(getDocument).recover {
+    def getDocument(con: Connection):Option[Document] = {
+      val time = System.nanoTime()
+      val res = con.execute()
+      println("Load time: " + url + "::::" +TimeUnit.MILLISECONDS.convert(System.nanoTime()-time, TimeUnit.NANOSECONDS))
+      Some(res.parse())
+    }
+    (Try(Jsoup.connect(url).userAgent("Mozilla/5.0").timeout(30 * 1000)).map(getDocument).recover {
       case e: HttpStatusException => logger.error(e.getStatusCode + " :: on " + url);
         prev.addChild(new Page(url,e.getMessage,e.getStatusCode,createSet[Page]));None
       case e: Exception => logger.error(e.getMessage + " :: on " + url);

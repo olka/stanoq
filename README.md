@@ -15,12 +15,14 @@ TODO:
     "scripts": {
         "deploy": "ng build -prod -sm -ec -bh /reponame/ && gh-pages -d dist"
     }
+
+1.1) Extract modules (UI, backend?)
+
 2) performance improvement
        recursion - stack size
        getdocument 100-400ms
        parselinks - 100 ms
-   crawler4j or self-written crawler?
-3) Extract modules (UI, backend?)
+3) Main purpose: analyze site/pages loading speed
 4) VueJS
 6) Mock tests
 7) remove overhead payload in stream endpoint
@@ -29,7 +31,7 @@ TODO:
 11) performance metrics
 12) Crawling process as akka actor
 13) UI improvements (overflow, css, layouts, mobile UI)
-14) integrate gatling into build process
+14) integrate gatling into build process ?
 15) improve visualization
 16) add different topology layout
 17) mongo DB controls
