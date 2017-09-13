@@ -30,13 +30,13 @@ case class Page(url: String, pageName: String, var statusCode: Int, timeToLoad:L
   def convertToNode:Node = Node(s"$pageName : $statusCode",if(children.size>0)Some(children.map(_.convertToNode).toList) else None,timeToLoad)
 
   def parse:List[(EchartNode,List[EchartLink])] = {
-    def getTuple = (EchartNode(url,hashCode,""), children.map(p => EchartLink(url,p.url)).toList)
+    def getTuple = (EchartNode(url,timeToLoad,""), children.map(p => EchartLink(url,p.url)).toList)
     getTuple :: children.flatMap(_.parse).toList
   }
 }
 
 case class EchartLink(source: String, target: String)
-case class EchartNode(name:String,value: Int,category:String)
+case class EchartNode(name:String,value: Long,category:String)
 case class EchartResponse(nodes:List[EchartNode], links:List[EchartLink])
 case class Node(value: String, children:Option[List[Node]], id:Long){
   def getChildCount:Int = if (children.isEmpty) 1 else 1 + children.get.map(_.getChildCount).sum
