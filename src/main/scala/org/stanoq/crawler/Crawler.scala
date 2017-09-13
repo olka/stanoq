@@ -16,7 +16,7 @@ class Crawler(config:ConfigProperties){
   val logger = Logging(ActorSystem(), getClass)
   val visitedPages = createSet[String]
   private val domain:String = config.getDomain
-  val root: Page = new Page(domain, domain,0,createSet[Page])
+  val root: Page = new Page(domain, domain,200,0,createSet[Page])
 
   def process:Crawler = process("")
 
@@ -29,14 +29,12 @@ class Crawler(config:ConfigProperties){
 
   private def crawl(url: String, depth: Int, prev: Page) {
     if (visitedPages.contains(url.substring(0,url.length-1)) || !visitedPages.add(url)) return
-    var doc: Document = getDocument(url,prev) getOrElse (return)
-    val page = new Page(url, doc.title(), 200,createSet[Page])
+    val (page,links) = getPage(url,prev)
+    if(page.statusCode!=200) return
     prev.addChild(page)
-    logger.info(visitedPages.size + " : " + url + " " + doc.title + " d:"+depth)
-    val links = parseLinksToVisit(doc)
+//    logger.info(visitedPages.size + " : " + url + " " + doc.title + " d:"+depth)
     logger.info(url + " "+links.size)
     if(depth > config.depthLimit) return
-    doc = null
     links.par.foreach(link => crawl(link, depth + 1, page))
   }
 
@@ -47,18 +45,22 @@ class Crawler(config:ConfigProperties){
 
   private def createSet[T] = Collections.newSetFromMap(new ConcurrentHashMap[T, java.lang.Boolean]).asScala
 
-  private def getDocument(url: String, prev:Page): Option[Document] = {
-    def getDocument(con: Connection):Option[Document] = {
+  private def getPage(url: String, prev:Page): (Page,List[String]) = {
+    def getDocument(con: Connection):(Page,List[String]) = {
       val time = System.nanoTime()
       val res = con.execute()
-      println("Load time: " + url + "::::" +TimeUnit.MILLISECONDS.convert(System.nanoTime()-time, TimeUnit.NANOSECONDS))
-      Some(res.parse())
+      val timeToLoad = TimeUnit.MILLISECONDS.convert(System.nanoTime()-time, TimeUnit.NANOSECONDS)
+      val doc = res.parse()
+      val links = parseLinksToVisit(doc)
+      (new Page(url, doc.title(), 200,timeToLoad,createSet[Page]),parseLinksToVisit(doc))
     }
     (Try(Jsoup.connect(url).userAgent("Mozilla/5.0").timeout(30 * 1000)).map(getDocument).recover {
       case e: HttpStatusException => logger.error(e.getStatusCode + " :: on " + url);
-        prev.addChild(new Page(url,e.getMessage,e.getStatusCode,createSet[Page]));None
+        val errPage = new Page(url,e.getMessage,e.getStatusCode,0,createSet[Page])
+        prev.addChild(errPage); (errPage,List())
       case e: Exception => logger.error(e.getMessage + " :: on " + url);
-        prev.addChild(new Page(url,e.getMessage,500,createSet[Page]));None
+        val errPage = new Page(url,e.getMessage,500,0,createSet[Page])
+        prev.addChild(errPage);(errPage, List())
     }).get
   }
 }
