@@ -27,7 +27,7 @@ case class ConfigProperties(url:String, depthLimit:Int, timeout:Long=5, exclusio
 case class Page(url: String, pageName: String, var statusCode: Int, timeToLoad:Long, children:Set[Page]){
   def addChild(page: Page) = children.add(page)
   def print:String = url + children.map(_.print).mkString
-  def convertToNode:Node = Node(s"$pageName : $statusCode",if(children.size>0)Some(children.map(_.convertToNode).toList) else None,url)
+  def convertToNode:Node = Node(s"$pageName : $statusCode",if(children.size>0)Some(children.map(_.convertToNode).toList) else None,timeToLoad)
 
   def parse:List[(EchartNode,List[EchartLink])] = {
     def getTuple = (EchartNode(url,hashCode,""), children.map(p => EchartLink(url,p.url)).toList)
@@ -38,7 +38,7 @@ case class Page(url: String, pageName: String, var statusCode: Int, timeToLoad:L
 case class EchartLink(source: String, target: String)
 case class EchartNode(name:String,value: Int,category:String)
 case class EchartResponse(nodes:List[EchartNode], links:List[EchartLink])
-case class Node(value: String, children:Option[List[Node]], id:String){
+case class Node(value: String, children:Option[List[Node]], id:Long){
   def getChildCount:Int = if (children.isEmpty) 1 else 1 + children.get.map(_.getChildCount).sum
 }
 case class CrawlerResponse(node:Node,echart:EchartResponse)
