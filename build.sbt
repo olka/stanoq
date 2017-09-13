@@ -23,6 +23,7 @@ libraryDependencies ++= {
     "org.scalatest"     %% "scalatest" % scalaTestV % "test",
     "io.gatling.highcharts" % "gatling-charts-highcharts" % "2.2.2" % "test",
     "io.gatling"            % "gatling-test-framework"    % "2.2.2" % "test",
+    "com.pauldijou" %% "jwt-core" % "0.14.0",
     "org.jsoup"             % "jsoup" % "1.10.3"
   )
 }
