@@ -44,7 +44,7 @@ class ServiceSpec extends AsyncFlatSpec with Matchers with ScalatestRouteTest wi
   }
 
   "CrawlerService" should "persist Node" in {
-    Post(s"/persist",  Node("test",None,"0")) ~> crawlerService.route ~> check {
+    Post(s"/persist",  Node("test",None,0)) ~> crawlerService.route ~> check {
       status shouldBe Created
     }
   }
@@ -58,7 +58,7 @@ class ServiceSpec extends AsyncFlatSpec with Matchers with ScalatestRouteTest wi
   }
 
   "CrawlerService" should "delete node" in {
-    Delete(s"/delete",  Node("test",None,"0")) ~> crawlerService.route ~> check {
+    Delete(s"/delete",  Node("test",None,0)) ~> crawlerService.route ~> check {
       status shouldBe Gone
     }
 
