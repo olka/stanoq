@@ -24,18 +24,16 @@ TODO:
        parselinks - 100 ms
 3) Main purpose: analyze site/pages loading speed
 4) VueJS
-6) Mock tests
-7) remove overhead payload in stream endpoint
-9) mongo DB + caching
-10) Session management and https://jwt.io
-11) performance metrics
-12) Crawling process as akka actor
-13) UI improvements (overflow, css, layouts, mobile UI)
-14) integrate gatling into build process ?
-15) improve visualization
-16) add different topology layout
-17) mongo DB controls
-18) depth level control
+5) Mock tests
+6) mongo DB => caching with pre-defined expiration timeout (12 hours?)
+7) Session management and https://jwt.io
+8) performance metrics
+9) Crawling process as akka actor
+10) UI improvements (overflow, css, layouts, mobile UI)
+11) integrate gatling into build process ?
+12) improve visualization
+13) add different topology layout
+14) depth level control
 
 ==============================Heroku============================================
 > t < 400 ms                                          7353 ( 82%)
@@ -53,6 +51,3 @@ TODO:
 ================================================================================
 
 vcgencmd measure_temp
-
-
-
