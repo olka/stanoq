@@ -7,16 +7,6 @@ http://stanoq.herokuapp.com
 ng build --prod --aot --build-optimizer
 
 TODO:
-1) Deployment process https://github.com/angular-buch/angular-cli-ghpages
-
-    npm install --save-dev gh-pages
-    then, in your package.json:
-
-    "scripts": {
-        "deploy": "ng build -prod -sm -ec -bh /reponame/ && gh-pages -d dist"
-    }
-
-1.1) Extract modules (UI, backend?)
 
 2) performance improvement
        recursion - stack size
