@@ -13,6 +13,7 @@ import spray.json._
 import org.mongodb.scala.bson.codecs.Macros._
 import org.mongodb.scala.bson.codecs.DEFAULT_CODEC_REGISTRY
 import org.bson.codecs.configuration.CodecRegistries.{fromProviders, fromRegistries}
+import org.bson.conversions.Bson
 
 import scala.concurrent._
 import scala.concurrent.Future
@@ -54,6 +55,12 @@ class CrawlerService() extends CrawlerProtocols {
     complete(HttpResponse(StatusCodes.OK, entity = HttpEntity(ContentType(MediaTypes.`application/json`), res.toList.toJson.toString())))
   }
 
+  def getNode(url:String) = {
+    val collection: MongoCollection[Node] = database.getCollection("crawler")
+    val res = Await.result(collection.find().toFuture(),Duration(10, TimeUnit.SECONDS))//TODO: finish. BSON conversion?
+    complete(HttpResponse(StatusCodes.OK, entity = HttpEntity(ContentType(MediaTypes.`application/json`), res.toList.toJson.toString())))
+  }
+
   def deleteNode(node:Node) = {
     import org.mongodb.scala.model.Filters._
     val collection: MongoCollection[Node] = database.getCollection("crawler")
@@ -65,5 +72,6 @@ class CrawlerService() extends CrawlerProtocols {
     pathPrefix("crawler") {pathEnd {(post & entity(as[ConfigProperties]))   (handleCrawlerRequest)}}~
     pathPrefix("delete")  {pathEnd {(delete & entity(as[Node]))             (deleteNode)}}~
     pathPrefix("persist") {pathEnd {(post & entity(as[Node]))               (persist)}}~
-    pathPrefix("getAll")  {pathEnd {(get)                                   (getAll)}}
+    pathPrefix("getAll")  {pathEnd {(get)                                   (getAll)}}~
+    pathPrefix("getNode")  {pathEnd {(get)                                   (getNode)}}
 }
