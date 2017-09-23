@@ -44,13 +44,21 @@ class ServiceSpec extends AsyncFlatSpec with Matchers with ScalatestRouteTest wi
   }
 
   "CrawlerService" should "persist Node" in {
-    Post(s"/persist",  Node("test",None,0)) ~> crawlerService.route ~> check {
+    Post("/node",  Node("test",None,0)) ~> crawlerService.route ~> check {
       status shouldBe Created
     }
   }
 
   "CrawlerService" should "getAll nodes" in {
-    Get(s"/getAll") ~> crawlerService.route ~> check {
+    Get(s"/nodes") ~> crawlerService.route ~> check {
+      status shouldBe OK
+      contentType shouldBe `application/json`
+      responseAs[Seq[Node]].head.value shouldBe "test"
+    }
+  }
+
+  "CrawlerService" should "get particular node" in {
+    Get(s"/node?value=test") ~> crawlerService.route ~> check {
       status shouldBe OK
       contentType shouldBe `application/json`
       responseAs[Seq[Node]].head.value shouldBe "test"
@@ -58,11 +66,11 @@ class ServiceSpec extends AsyncFlatSpec with Matchers with ScalatestRouteTest wi
   }
 
   "CrawlerService" should "delete node" in {
-    Delete(s"/delete",  Node("test",None,0)) ~> crawlerService.route ~> check {
+    Delete(s"/node",  Node("test",None,0)) ~> crawlerService.route ~> check {
       status shouldBe Gone
     }
 
-    Get(s"/getAll") ~> crawlerService.route ~> check {
+    Get(s"/nodes") ~> crawlerService.route ~> check {
       status shouldBe OK
       contentType shouldBe `application/json`
       responseAs[Seq[Node]].size shouldBe 0

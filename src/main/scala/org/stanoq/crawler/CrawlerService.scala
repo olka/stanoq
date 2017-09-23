@@ -3,7 +3,6 @@ package org.stanoq.crawler
 import java.util.concurrent.TimeUnit
 
 import akka.actor.ActorSystem
-import akka.http.scaladsl.marshalling.ToResponseMarshallable
 import akka.http.scaladsl.model._
 import akka.http.scaladsl.server.Directives._
 import com.typesafe.config.ConfigFactory
@@ -13,7 +12,6 @@ import spray.json._
 import org.mongodb.scala.bson.codecs.Macros._
 import org.mongodb.scala.bson.codecs.DEFAULT_CODEC_REGISTRY
 import org.bson.codecs.configuration.CodecRegistries.{fromProviders, fromRegistries}
-import org.bson.conversions.Bson
 import org.mongodb.scala.model.Filters._
 
 import scala.concurrent._
@@ -66,9 +64,11 @@ class CrawlerService() extends CrawlerProtocols {
   }
 
   val route =
-    pathPrefix("crawler") {pathEnd {(post & entity(as[ConfigProperties]))   (handleCrawlerRequest)}}~
-    pathPrefix("delete")  {pathEnd {(delete & entity(as[Node]))             (deleteNode)}}~
-    pathPrefix("persist") {pathEnd {(post & entity(as[Node]))               (persist)}}~
-    pathPrefix("getAll")  {pathEnd {(get)                                   (getAll)}}~
-    pathPrefix("getNode") {pathEnd {get {parameters('node.as[String])       (getNode)}}}
+    pathPrefix("crawler") {pathEnd {
+      (post & entity(as[ConfigProperties]))      (handleCrawlerRequest)}}~
+    pathPrefix("node") {pathEnd {
+        get {parameters('value.as[String])       (getNode)} ~
+        (delete & entity(as[Node]))              (deleteNode) ~
+        (post & entity(as[Node]))                (persist)}}~
+    pathPrefix("nodes")  {pathEnd {(get)         (getAll)}}
 }
