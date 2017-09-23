@@ -27,7 +27,10 @@ case class ConfigProperties(url:String, depthLimit:Int, timeout:Long=5, exclusio
 case class Page(url: String, pageName: String, var statusCode: Int, timeToLoad:Long, children:Set[Page]){
   def addChild(page: Page) = children.add(page)
   def print:String = url + children.map(_.print).mkString
-  def convertToNode:Node = Node(s"$pageName : $statusCode",if(children.size>0)Some(children.map(_.convertToNode).toList) else None,timeToLoad)
+  def convertToNode:Node = {
+    def getChildNodes = if(children.size>0) Some(children.map(_.convertToNode).toList) else None
+    Node(s"$pageName : $statusCode", getChildNodes, timeToLoad)
+  }
 
   def parse:List[(EchartNode,List[EchartLink])] = {
     def getTuple = (EchartNode(url,timeToLoad,""), children.map(p => EchartLink(url,p.url)).toList)

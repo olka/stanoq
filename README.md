@@ -8,6 +8,8 @@ ng build --prod --aot --build-optimizer
 
 TODO:
 
+HSV 150->0 100 100
+
 2) performance improvement
        recursion - stack size
        getdocument 100-400ms

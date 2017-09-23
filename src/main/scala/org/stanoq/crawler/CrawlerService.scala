@@ -14,6 +14,7 @@ import org.mongodb.scala.bson.codecs.Macros._
 import org.mongodb.scala.bson.codecs.DEFAULT_CODEC_REGISTRY
 import org.bson.codecs.configuration.CodecRegistries.{fromProviders, fromRegistries}
 import org.bson.conversions.Bson
+import org.mongodb.scala.model.Filters._
 
 import scala.concurrent._
 import scala.concurrent.Future
@@ -24,13 +25,14 @@ class CrawlerService() extends CrawlerProtocols {
   implicit val blockingDispatcher: ExecutionContext = ActorSystem().dispatchers.lookup("blocking-dispatcher")
   val config = ConfigFactory.load()
   val mongoClient: MongoClient = MongoClient(config.getString("mongo.url"))
+  val collection: MongoCollection[Node] = database.getCollection("crawler")
   val nodeRegistry = fromRegistries(fromProviders(classOf[Node]), DEFAULT_CODEC_REGISTRY )
   val database = mongoClient.getDatabase("stanoq").withCodecRegistry(nodeRegistry)
 
   def handleCrawlerRequest(config: ConfigProperties) = {
     validate(config.validate, "Config wasn't properly set!") {
       complete {
-        val crawler = new Crawler(config).process
+        val crawler = new Crawler(config).process()
         Future {
           val root: Node = crawler.root.convertToNode
           val crawlerEntity = HttpEntity(ContentType(MediaTypes.`application/json`), root.toJson.toString())
@@ -50,20 +52,16 @@ class CrawlerService() extends CrawlerProtocols {
   }
 
   def getAll = {
-    val collection: MongoCollection[Node] = database.getCollection("crawler")
     val res = Await.result(collection.find().toFuture(),Duration(10, TimeUnit.SECONDS))
     complete(HttpResponse(StatusCodes.OK, entity = HttpEntity(ContentType(MediaTypes.`application/json`), res.toList.toJson.toString())))
   }
 
   def getNode(url:String) = {
-    val collection: MongoCollection[Node] = database.getCollection("crawler")
-    val res = Await.result(collection.find().toFuture(),Duration(10, TimeUnit.SECONDS))//TODO: finish. BSON conversion?
+    val res = Await.result(collection.find(equal("value",url)).toFuture(),Duration(10, TimeUnit.SECONDS))
     complete(HttpResponse(StatusCodes.OK, entity = HttpEntity(ContentType(MediaTypes.`application/json`), res.toList.toJson.toString())))
   }
 
   def deleteNode(node:Node) = {
-    import org.mongodb.scala.model.Filters._
-    val collection: MongoCollection[Node] = database.getCollection("crawler")
     val res = Await.result(collection.deleteOne(equal("id", node.id)).head(),Duration(10, TimeUnit.SECONDS))
     complete{HttpResponse(StatusCodes.Gone)}
   }
@@ -73,5 +71,5 @@ class CrawlerService() extends CrawlerProtocols {
     pathPrefix("delete")  {pathEnd {(delete & entity(as[Node]))             (deleteNode)}}~
     pathPrefix("persist") {pathEnd {(post & entity(as[Node]))               (persist)}}~
     pathPrefix("getAll")  {pathEnd {(get)                                   (getAll)}}~
-    pathPrefix("getNode")  {pathEnd {(get)                                   (getNode)}}
+    pathPrefix("getNode") {pathEnd {get {parameters('node.as[String])       (getNode)}}}
 }
