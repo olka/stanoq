@@ -25,9 +25,9 @@ class CrawlerService() extends CrawlerProtocols {
   implicit val blockingDispatcher: ExecutionContext = ActorSystem().dispatchers.lookup("blocking-dispatcher")
   val config = ConfigFactory.load()
   val mongoClient: MongoClient = MongoClient(config.getString("mongo.url"))
-  val collection: MongoCollection[Node] = database.getCollection("crawler")
   val nodeRegistry = fromRegistries(fromProviders(classOf[Node]), DEFAULT_CODEC_REGISTRY )
   val database = mongoClient.getDatabase("stanoq").withCodecRegistry(nodeRegistry)
+  val collection: MongoCollection[Node] = database.getCollection("crawler")
 
   def handleCrawlerRequest(config: ConfigProperties) = {
     validate(config.validate, "Config wasn't properly set!") {
@@ -43,7 +43,6 @@ class CrawlerService() extends CrawlerProtocols {
   }
 
   def persist(node: Node) = {
-    val collection: MongoCollection[Node] = database.getCollection("crawler")
     val res = Await.result(collection.insertOne(node).head(),Duration(10, TimeUnit.SECONDS))
     complete {
       println(res + " ::: "+node);
