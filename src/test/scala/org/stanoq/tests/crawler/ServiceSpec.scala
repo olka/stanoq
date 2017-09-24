@@ -28,7 +28,7 @@ class ServiceSpec extends AsyncFlatSpec with Matchers with ScalatestRouteTest wi
     Post(s"/crawler", ConfigProperties("https://www.websocket.org/index.html",3)) ~> crawlerService.route ~> check {
       status shouldBe OK
       contentType shouldBe `application/json`
-      responseAs[Node].getChildCount should be >=20
+      responseAs[Node].getChildCount should be >=2
     }
   }
 
