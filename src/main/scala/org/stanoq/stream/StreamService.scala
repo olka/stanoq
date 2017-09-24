@@ -20,7 +20,7 @@ class StreamService extends CrawlerProtocols{
 
   def getResponse(config:ConfigProperties) = {
     val crawler = new Crawler(config)
-    Future {crawler.process()}
+    Future {crawler.process("/")}
     def pageRoot = crawler.root
     def properRoot = if(pageRoot.children.size>0)pageRoot.children.head else pageRoot
     def echartRoot = properRoot.parse

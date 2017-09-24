@@ -30,7 +30,7 @@ class CrawlerService() extends CrawlerProtocols {
   def handleCrawlerRequest(config: ConfigProperties) = {
     validate(config.validate, "Config wasn't properly set!") {
       complete {
-        val crawler = new Crawler(config).process()
+        val crawler = new Crawler(config).process("/")
         Future {
           val root: Node = crawler.root.convertToNode
           val crawlerEntity = HttpEntity(ContentType(MediaTypes.`application/json`), root.toJson.toString())
