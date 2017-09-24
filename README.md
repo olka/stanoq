@@ -2,7 +2,7 @@
 [![Build Status](https://travis-ci.org/olka/stanoq.svg?branch=master)](https://travis-ci.org/olka/stanoq)
 
 STANoQ
-http://stanoq.herokuapp.com
+https://olka.github.io/stanoq-ui/
 
 ng build --prod --aot --build-optimizer
 
