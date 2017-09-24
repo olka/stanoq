@@ -2,9 +2,9 @@ package org.stanoq.stream
 import akka.actor.ActorSystem
 import akka.http.scaladsl.common.{EntityStreamingSupport, JsonEntityStreamingSupport}
 import akka.http.scaladsl.server.Directives._
-import akka.stream.ThrottleMode
+import akka.stream.{OverflowStrategy, ThrottleMode}
 import akka.stream.impl.Stages.DefaultAttributes
-import akka.stream.scaladsl.{Flow, Source}
+import akka.stream.scaladsl.{Flow, Keep, Source}
 import spray.json._
 
 import scala.concurrent.duration._
@@ -26,13 +26,13 @@ class StreamService extends CrawlerProtocols{
     def node = if(pageRoot.children.size>0)pageRoot.children.head.convertToNode else pageRoot.convertToNode
     val source = {
       def response = CrawlerResponse(node,EchartResponse(echartRoot.map(_._1),echartRoot.flatMap(_._2)))
-      def next(node: CrawlerResponse) = if (pageRoot.statusCode == 200) {println(response.toJson.toString);None} else Some((response, response))
-      Source.unfold(response)(next).withAttributes(DefaultAttributes.delayInitial)
+      def next(node: CrawlerResponse) = if (node == null) None else if (pageRoot.statusCode == 200) {println(response.toJson.toString);Some((null, response))} else Some((response, response))
+      Source.unfold(response)(next).withAttributes(DefaultAttributes.buffer)
     }
-    complete(source.via(getThrottlingFlow[CrawlerResponse]))
+    encodeResponse(complete(source.via(getThrottlingFlow[CrawlerResponse])))
   }
 
-  def getThrottlingFlow[T] = Flow[T].throttle(elements = 1, per = 450.millis, maximumBurst = 0, mode = ThrottleMode.Shaping)
+  def getThrottlingFlow[T] = Flow[T].throttle(1, per = 450.millis, 1, ThrottleMode.shaping)
 
   val route =
     pathPrefix("crawlerStream") {

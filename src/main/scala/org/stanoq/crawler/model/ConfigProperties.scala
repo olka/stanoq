@@ -1,6 +1,7 @@
 package org.stanoq.crawler.model
 
 import java.net.{URI, URL}
+import javafx.scene.paint.Color
 
 import akka.http.scaladsl.marshallers.sprayjson.SprayJsonSupport
 import spray.json.{DefaultJsonProtocol, RootJsonFormat}
@@ -36,23 +37,22 @@ case class Page(url: String, name: String, var statusCode: Int, timeToLoad: Long
   }
 
   def parse: List[(EchartNode, List[EchartLink])] = {
-    def getColor = {
-      //добавить больше градацию
-      import javafx.scene.paint.Color
-      val hue: Int = if (timeToLoad > 1000) 0 else (timeToLoad / 6.6666).toInt
-      val c: Color = Color.web("hsl(" + hue + ",100%,100%)")
-      "#" + c.toString.substring(2, 8)
+    def hue = if (timeToLoad > 1500 || statusCode!=200) 0 else 150-(timeToLoad / 10).toInt
+    def color = "#" + Color.web("hsl(" + hue + ",100%,75%)").toString.substring(2, 8)
+    def category = {
+      val color = hue
+      if(hue>100) 1
+      else if (hue<51) 3
+      else 2
     }
-
-    def getTuple = (EchartNode(url, timeToLoad, statusCode, getColor, "", size), children.map(p => EchartLink(url, p.url)).toList)
-
+    def getTuple = (EchartNode(url, timeToLoad, statusCode, color, category, size), children.map(p => EchartLink(url, p.url)).toList)
     getTuple :: children.flatMap(_.parse).toList
   }
 }
 
 case class EchartLink(source: String, target: String)
 
-case class EchartNode(name: String, value: Long, statusCode: Int, color: String, category: String = "", size: Long = 0) {
+case class EchartNode(url: String, timeToLoad: Long, statusCode: Int, color: String, category: Int, size: Long) {
   //
 
   //symbolSize: node.size
