@@ -22,8 +22,9 @@ class StreamService extends CrawlerProtocols{
     val crawler = new Crawler(config)
     Future {crawler.process()}
     def pageRoot = crawler.root
-    def echartRoot = if(pageRoot.children.size>0)pageRoot.children.head.parse else pageRoot.parse
-    def node = if(pageRoot.children.size>0)pageRoot.children.head.convertToNode else pageRoot.convertToNode
+    def properRoot = if(pageRoot.children.size>0)pageRoot.children.head else pageRoot
+    def echartRoot = properRoot.parse
+    def node = properRoot.convertToNode
     val source = {
       def response = CrawlerResponse(node,EchartResponse(echartRoot.map(_._1),echartRoot.flatMap(_._2)))
       def next(node: CrawlerResponse) = if (node == null) None else if (pageRoot.statusCode == 200) {println(response.toJson.toString);Some((null, response))} else Some((response, response))

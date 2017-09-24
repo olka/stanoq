@@ -55,10 +55,10 @@ class Crawler(config:ConfigProperties){
 
     (Try(Jsoup.connect(url).userAgent("Mozilla/5.0").timeout(30 * 1000)).map(getDocument).recover {
       case e: HttpStatusException => logger.error(e.getStatusCode + " :: on " + url);
-        val errPage = new Page(url,e.getMessage,e.getStatusCode,0,0,createSet[Page])
-        prev.addChild(errPage); (errPage,List())
+        val errPage = new Page(url,e.getMessage,e.getStatusCode,2000,1000,createSet[Page])
+        prev.addChild(errPage); (errPage, List())
       case e: Exception => logger.error(e.getMessage + " :: on " + url);
-        val errPage = new Page(url,e.getMessage,500,0,0,createSet[Page])
+        val errPage = new Page(url,e.getMessage,500,2000,1000,createSet[Page])
         prev.addChild(errPage);(errPage, List())
     }).get
   }
