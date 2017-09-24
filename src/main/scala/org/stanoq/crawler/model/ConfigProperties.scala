@@ -41,9 +41,9 @@ case class Page(url: String, name: String, var statusCode: Int, timeToLoad: Long
     def color = "#" + Color.web("hsl(" + hue + ",100%,75%)").toString.substring(2, 8)
     def category = {
       val color = hue
-      if(hue>100) 1
-      else if (hue<51) 3
-      else 2
+      if(hue>100) "green"
+      else if (hue<51) "red"
+      else "yellow"
     }
     def getTuple = (EchartNode(url, timeToLoad, statusCode, color, category, size), children.map(p => EchartLink(url, p.url)).toList)
     getTuple :: children.flatMap(_.parse).toList
@@ -52,7 +52,7 @@ case class Page(url: String, name: String, var statusCode: Int, timeToLoad: Long
 
 case class EchartLink(source: String, target: String)
 
-case class EchartNode(url: String, timeToLoad: Long, statusCode: Int, color: String, category: Int, size: Long) {
+case class EchartNode(url: String, timeToLoad: Long, statusCode: Int, color: String, category: String, size: Long) {
   //
 
   //symbolSize: node.size
