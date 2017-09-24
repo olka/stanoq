@@ -22,14 +22,14 @@ class StreamService extends CrawlerProtocols{
     val crawler = new Crawler(config)
     Future {crawler.process()}
     def pageRoot = crawler.root
-    def echartRoot = pageRoot.parse
-    def node = pageRoot.convertToNode
+    def echartRoot = if(pageRoot.children.size>0)pageRoot.children.head.parse else pageRoot.parse
+    def node = if(pageRoot.children.size>0)pageRoot.children.head.convertToNode else pageRoot.convertToNode
     val source = {
       def response = CrawlerResponse(node,EchartResponse(echartRoot.map(_._1),echartRoot.flatMap(_._2)))
       def next(node: CrawlerResponse) = if (pageRoot.statusCode == 200) {println(response.toJson.toString);None} else Some((response, response))
       Source.unfold(response)(next).withAttributes(DefaultAttributes.delayInitial)
     }
-    encodeResponse(complete(source.via(getThrottlingFlow[CrawlerResponse])))
+    complete(source.via(getThrottlingFlow[CrawlerResponse]))
   }
 
   def getThrottlingFlow[T] = Flow[T].throttle(elements = 1, per = 450.millis, maximumBurst = 0, mode = ThrottleMode.Shaping)

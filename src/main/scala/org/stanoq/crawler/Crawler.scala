@@ -16,7 +16,7 @@ class Crawler(config:ConfigProperties){
   val logger = Logging(ActorSystem(), getClass)
   val visitedPages = createSet[String]
   private val domain:String = config.getDomain
-  val root: Page = new Page(domain, domain,200,0,createSet[Page])
+  val root: Page = new Page(domain, domain,0,0,0,createSet[Page])
 
   def process(url: String="") = {
     logger.info("Processing " + config.url + url)
@@ -46,18 +46,19 @@ class Crawler(config:ConfigProperties){
     def getDocument(con: Connection):(Page,List[String]) = {
       val time = System.nanoTime()
       val res = con.execute()
+      val pageSize = res.bodyAsBytes().size
       val timeToLoad = TimeUnit.MILLISECONDS.convert(System.nanoTime()-time, TimeUnit.NANOSECONDS)
       val doc = res.parse()
       val links = parseLinksToVisit(doc)
-      (new Page(url, doc.title(), 200,timeToLoad,createSet[Page]),parseLinksToVisit(doc))
+      (new Page(url, doc.title(), 200,timeToLoad,pageSize,createSet[Page]),parseLinksToVisit(doc))
     }
 
     (Try(Jsoup.connect(url).userAgent("Mozilla/5.0").timeout(30 * 1000)).map(getDocument).recover {
       case e: HttpStatusException => logger.error(e.getStatusCode + " :: on " + url);
-        val errPage = new Page(url,e.getMessage,e.getStatusCode,0,createSet[Page])
+        val errPage = new Page(url,e.getMessage,e.getStatusCode,0,0,createSet[Page])
         prev.addChild(errPage); (errPage,List())
       case e: Exception => logger.error(e.getMessage + " :: on " + url);
-        val errPage = new Page(url,e.getMessage,500,0,createSet[Page])
+        val errPage = new Page(url,e.getMessage,500,0,0,createSet[Page])
         prev.addChild(errPage);(errPage, List())
     }).get
   }
