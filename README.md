@@ -4,25 +4,18 @@
 STANoQ
 https://olka.github.io/stanoq-ui/
 
-ng build --prod --aot --build-optimizer
-
 TODO:
 
-HSV 150->0 100 100
-
-2) performance improvement
+0) Results persistence (autoload and previous results list)
+1) performance improvement
        recursion - stack size
        getdocument 100-400ms
        parselinks - 100 ms
-4) VueJS
-5) Mock tests
-6) mongo DB => caching with pre-defined expiration timeout (12 hours?)
-7) Session management and https://jwt.io
-9) Crawling process as akka actor
-10) UI improvements (overflow, css, layouts, mobile UI)
-11) integrate gatling into build process ?
-13) add different topology layout
-14) depth level control
+2) Mock tests
+3) Session management and https://jwt.io
+4) Crawling process as akka actor (Start/Stop)
+5) mobile UI and cross-browser support
+6) integrate gatling into build process and track performance improvement
 
 ==============================Heroku============================================
 > t < 400 ms                                          7353 ( 82%)
@@ -30,7 +23,6 @@ HSV 150->0 100 100
 > t > 800 ms                                           379 (  4%)
 > failed                                                 0 (  0%)
 ================================================================================
-
 
 ===============================PI===============================================
 > t < 400 ms                                          3935 ( 44%)
