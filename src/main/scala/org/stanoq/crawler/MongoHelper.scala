@@ -20,7 +20,11 @@ object MongoHelper {
   val database = mongoClient.getDatabase("stanoq").withCodecRegistry(pageRegistry)
   val collection: MongoCollection[Page] = database.getCollection("crawler")
 
-  def getAllWithLimit(limit: Int) = Await.result(collection.find().limit(limit).toFuture(), Duration(10, TimeUnit.SECONDS))
+  def getAllWithLimit(limit: Int):List[EchartResponse] = Await.result(collection.find().limit(limit).toFuture(), Duration(10, TimeUnit.SECONDS)).map(root => toEchartResponse(root)).toList
+  def toEchartResponse(page:Page):EchartResponse = {
+    val echartRoot = page.parse
+    EchartResponse(echartRoot.map(_._1),echartRoot.flatMap(_._2))
+  }
   def getAll = getAllWithLimit(0)
   def getPage(url: String) = Await.result(collection.find(equal("value",url)).toFuture(),Duration(10, TimeUnit.SECONDS))
   def persist(page: Page) = Await.result(collection.insertOne(page).head(), Duration(10, TimeUnit.SECONDS))
