@@ -7,8 +7,7 @@ import akka.http.scaladsl.server.Directives._
 import akka.http.scaladsl.server.directives.DebuggingDirectives
 import akka.stream.ActorMaterializer
 import com.typesafe.config.ConfigFactory
-import org.stanoq.crawler.CrawlerService
-import org.stanoq.stream.StreamService
+import org.stanoq.crawler.{CrawlerService, StreamService}
 import org.stanoq.version.org.stanoq.crawler.VersionService
 
 object RestController extends App with CorsSupport {

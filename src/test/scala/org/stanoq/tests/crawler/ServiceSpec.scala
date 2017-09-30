@@ -6,9 +6,8 @@ import akka.http.scaladsl.model.StatusCodes._
 import akka.http.scaladsl.testkit.{RouteTestTimeout, ScalatestRouteTest}
 import org.scalatest._
 import org.scalatest.concurrent.{Eventually, IntegrationPatience}
-import org.stanoq.crawler.CrawlerService
+import org.stanoq.crawler.{CrawlerService, StreamService}
 import org.stanoq.crawler.model._
-import org.stanoq.stream.StreamService
 import spray.json._
 
 import scala.concurrent.duration._
