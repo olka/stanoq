@@ -17,12 +17,12 @@ import scala.concurrent.duration.Duration
 object MongoHelper {
   val config = ConfigFactory.load()
   val rawUrl = config.getString("mongo.url")
-  val url = rawUrl.substring(rawUrl.lastIndexOf("/")+1)
-  val databaseName = rawUrl.substring(0,rawUrl.lastIndexOf("/")+1)
-  val mongoClient: MongoClient = MongoClient()
+  val url = rawUrl.substring(0,rawUrl.lastIndexOf("/")+1)
+  val databaseName = rawUrl.substring(rawUrl.lastIndexOf("/")+1)
+  val mongoClient: MongoClient = MongoClient(rawUrl)
 
   val responseRegistry = fromRegistries(fromProviders(classOf[CrawlerResponse],classOf[ConfigProperties],classOf[Node],classOf[EchartResponse],classOf[EchartNode],classOf[EchartLink]), DEFAULT_CODEC_REGISTRY)
-  val database = mongoClient.getDatabase("stanoq").withCodecRegistry(responseRegistry)
+  val database = mongoClient.getDatabase(databaseName).withCodecRegistry(responseRegistry)
   val collection: MongoCollection[CrawlerResponse] = database.getCollection("crawler")
   def filterResponse(config:ConfigProperties):Bson = and(equal("config.url", config.url),equal("config.depthLimit", config.depthLimit))
   def size = Await.result(collection.count().head(), Duration(10, TimeUnit.SECONDS)).toInt
