@@ -57,7 +57,7 @@ case class Node(value: String, children: Option[List[Node]], id: Long) {
   def getChildCount: Int = if (children.isEmpty) 1 else 1 + children.get.map(_.getChildCount).sum
 }
 
-case class CrawlerResponse(node: Node, echart: EchartResponse)
+case class CrawlerResponse(node: Node, echart: EchartResponse, config: ConfigProperties)
 
 trait CrawlerProtocols extends SprayJsonSupport with DefaultJsonProtocol {
   implicit val nodeFormat: RootJsonFormat[Node] = rootFormat(lazyFormat(jsonFormat(Node, "value", "children", "id")))
@@ -65,5 +65,5 @@ trait CrawlerProtocols extends SprayJsonSupport with DefaultJsonProtocol {
   implicit val elinkFormat: RootJsonFormat[EchartLink] = jsonFormat2(EchartLink.apply)
   implicit val enodeFormat: RootJsonFormat[EchartNode] = jsonFormat6(EchartNode.apply)
   implicit val echartFormat: RootJsonFormat[EchartResponse] = jsonFormat2(EchartResponse.apply)
-  implicit val responseFormat: RootJsonFormat[CrawlerResponse] = jsonFormat2(CrawlerResponse.apply)
+  implicit val responseFormat: RootJsonFormat[CrawlerResponse] = jsonFormat3(CrawlerResponse.apply)
 }

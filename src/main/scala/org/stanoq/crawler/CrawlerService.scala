@@ -34,18 +34,17 @@ class CrawlerService() extends CrawlerProtocols {
     MongoHelper.persist(response)
     complete{HttpResponse(StatusCodes.Created)}
   }
-  def deletePage(page:Page) = {
-    MongoHelper.deletePage(page)
+  def deletePage(site:CrawlerResponse) = {
+    MongoHelper.deleteSite(site)
     complete{HttpResponse(StatusCodes.Gone)}
   }
 
   val route = pathPrefix("crawler") {pathEnd {
       (post & entity(as[ConfigProperties]))      (handleCrawlerRequest)}}~
-    pathPrefix("node") {pathEnd {
+    pathPrefix("site") {pathEnd {
         get                                      (getLatest)
 //        get {parameters('value.as[String])       (getPage)}~
 //        (delete & entity(as[Page]))              (deletePage)~
-//        (post & entity(as[Page]))                (persist)}
-    }~
-    pathPrefix("nodes")  {pathEnd {(get)         (getAll)}}}
+    }}~
+    pathPrefix("sites")  {pathEnd {(get)         (getAll)}}
 }

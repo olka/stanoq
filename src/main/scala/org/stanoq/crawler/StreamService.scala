@@ -27,7 +27,7 @@ class StreamService extends CrawlerProtocols{
     def echartRoot = properRoot.parse
     def node = properRoot.convertToNode
     val source = {
-      def response = CrawlerResponse(node,EchartResponse(echartRoot.map(_._1),echartRoot.flatMap(_._2)))
+      def response = CrawlerResponse(node,EchartResponse(echartRoot.map(_._1),echartRoot.flatMap(_._2)),config)
       def next(node: CrawlerResponse) = {
         if (node == null) {persist(response); None}
         else if (pageRoot.statusCode == 200) {println(response.toJson.toString);Some((null, response))}
