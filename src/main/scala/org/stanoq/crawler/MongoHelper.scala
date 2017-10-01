@@ -19,14 +19,14 @@ object MongoHelper {
 
   import org.bson.codecs.Codec
 
-  val responseRegistry = fromRegistries(fromProviders(classOf[EchartResponse],classOf[EchartNode],classOf[EchartLink]), DEFAULT_CODEC_REGISTRY)
+  val responseRegistry = fromRegistries(fromProviders(classOf[CrawlerResponse],classOf[Node],classOf[EchartResponse],classOf[EchartNode],classOf[EchartLink]), DEFAULT_CODEC_REGISTRY)
   val database = mongoClient.getDatabase("stanoq").withCodecRegistry(responseRegistry)
-  val collection: MongoCollection[EchartResponse] = database.getCollection("crawler")
+  val collection: MongoCollection[CrawlerResponse] = database.getCollection("crawler")
 
-  val size = Await.result(collection.count().head(), Duration(10, TimeUnit.SECONDS)).toInt
-  def getLatest:List[EchartResponse] = Await.result(collection.find().skip(size-1).toFuture(), Duration(10, TimeUnit.SECONDS)).toList
+  def size = Await.result(collection.count().head(), Duration(10, TimeUnit.SECONDS)).toInt
+  def getLatest:List[CrawlerResponse] = Await.result(collection.find().skip(size-1).toFuture(), Duration(10, TimeUnit.SECONDS)).toList
   def getAll(limit: Int) = Await.result(collection.find().limit(limit).toFuture(), Duration(10, TimeUnit.SECONDS)).toList
   def getPage(url: String) = Await.result(collection.find(equal("value",url)).toFuture(),Duration(10, TimeUnit.SECONDS))
-  def persist(response: EchartResponse) = Await.result(collection.insertOne(response).head(), Duration(10, TimeUnit.SECONDS))
+  def persist(response: CrawlerResponse) = Await.result(collection.insertOne(response).head(), Duration(10, TimeUnit.SECONDS))
   def deletePage(page: Page) = Await.result(collection.deleteOne(equal("url", page.url)).head(),Duration(10, TimeUnit.SECONDS))
 }

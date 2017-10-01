@@ -19,7 +19,7 @@ libraryDependencies ++= {
     "com.typesafe.akka" %% "akka-http" % akkaHttpV,
     "com.typesafe.akka" %% "akka-http-spray-json" % akkaHttpV,
     "com.typesafe.akka" %% "akka-http-testkit" % akkaHttpV,
-    "org.mongodb.scala" %% "mongo-scala-driver" % "2.1.0",
+    "org.mongodb.scala" %% "mongo-scala-driver" % "2.0.0",
     "org.scalatest"     %% "scalatest" % scalaTestV % "test",
     "io.gatling.highcharts" % "gatling-charts-highcharts" % "2.2.2" % "test",
     "io.gatling"            % "gatling-test-framework"    % "2.2.2" % "test",
