@@ -12,7 +12,6 @@ class VersionService {
   val route = pathPrefix("version") {
       pathEnd {
         get {
-          println(ConfigFactory.load().getString("mongo.url"))
           complete(HttpResponse(StatusCodes.OK, entity = HttpEntity(ContentType(MediaTypes.`application/json`), s"""{"version": $version}""")))
         }
       }

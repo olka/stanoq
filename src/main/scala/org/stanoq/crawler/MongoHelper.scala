@@ -16,7 +16,10 @@ import scala.concurrent.duration.Duration
 
 object MongoHelper {
   val config = ConfigFactory.load()
-  val mongoClient: MongoClient = MongoClient(config.getString("mongo.url"))
+  val rawUrl = config.getString("mongo.url")
+  val url = rawUrl.substring(rawUrl.lastIndexOf("/")+1)
+  val databaseName = rawUrl.substring(0,rawUrl.lastIndexOf("/")+1)
+  val mongoClient: MongoClient = MongoClient()
 
   val responseRegistry = fromRegistries(fromProviders(classOf[CrawlerResponse],classOf[ConfigProperties],classOf[Node],classOf[EchartResponse],classOf[EchartNode],classOf[EchartLink]), DEFAULT_CODEC_REGISTRY)
   val database = mongoClient.getDatabase("stanoq").withCodecRegistry(responseRegistry)
