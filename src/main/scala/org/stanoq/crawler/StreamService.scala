@@ -29,7 +29,7 @@ class StreamService extends CrawlerProtocols{
     val source = {
       def response = CrawlerResponse(node,EchartResponse(echartRoot.map(_._1),echartRoot.flatMap(_._2)))
       def next(node: CrawlerResponse) = {
-        if (node == null) {persist(properRoot); None}
+        if (node == null) {persist(response.echart); None}
         else if (pageRoot.statusCode == 200) {println(response.toJson.toString);Some((null, response))}
         else Some((response, response))
       }

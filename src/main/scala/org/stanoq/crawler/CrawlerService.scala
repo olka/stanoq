@@ -30,8 +30,8 @@ class CrawlerService() extends CrawlerProtocols {
   def getAll = complete(HttpResponse(StatusCodes.OK, entity = HttpEntity(ContentType(MediaTypes.`application/json`), MongoHelper.getAll.toList.toJson.toString())))
   def getAny = complete(HttpResponse(StatusCodes.OK, entity = HttpEntity(ContentType(MediaTypes.`application/json`), MongoHelper.getAllWithLimit(1).toList.toJson.toString())))
 //  def getPage(url:String) = complete(HttpResponse(StatusCodes.OK, entity = HttpEntity(ContentType(MediaTypes.`application/json`), MongoHelper.getPage(url).toList.toJson.toString())))
-  def persist(page: Page) = {
-    MongoHelper.persist(page)
+  def persist(response: EchartResponse) = {
+    MongoHelper.persist(response)
     complete{HttpResponse(StatusCodes.Created)}
   }
   def deletePage(page:Page) = {

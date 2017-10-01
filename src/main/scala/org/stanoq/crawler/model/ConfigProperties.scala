@@ -26,7 +26,7 @@ case class ConfigProperties(url: String, depthLimit: Int, timeout: Long = 5, exc
 }
 
 case class Page(url: String, name: String, var statusCode: Int, timeToLoad: Long, size: Int, children: Set[Page]) {
-  def addChild(page: Page) = children.add(page)
+  def addChild(page: Page):Boolean = children.add(page)
 
   def print: String = url + children.map(_.print).mkString
 
