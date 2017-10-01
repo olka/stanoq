@@ -2,7 +2,6 @@ package org.stanoq.crawler
 
 import java.util.concurrent.TimeUnit
 
-import com.mongodb.client.model.DeleteOptions
 import com.typesafe.config.ConfigFactory
 import org.mongodb.scala.{MongoClient, MongoCollection}
 import org.stanoq.crawler.model._
