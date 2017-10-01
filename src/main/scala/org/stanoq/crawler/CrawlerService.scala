@@ -29,22 +29,11 @@ class CrawlerService() extends CrawlerProtocols {
 
   def getAll = complete(HttpResponse(StatusCodes.OK, entity = HttpEntity(ContentType(MediaTypes.`application/json`), MongoHelper.getAll(0).toList.toJson.toString())))
   def getLatest = complete(HttpResponse(StatusCodes.OK, entity = HttpEntity(ContentType(MediaTypes.`application/json`), MongoHelper.getLatest.toList.toJson.toString())))
-//  def getPage(url:String) = complete(HttpResponse(StatusCodes.OK, entity = HttpEntity(ContentType(MediaTypes.`application/json`), MongoHelper.getPage(url).toList.toJson.toString())))
-  def persist(response: CrawlerResponse) = {
-    MongoHelper.persist(response)
-    complete{HttpResponse(StatusCodes.Created)}
-  }
-  def deletePage(site:CrawlerResponse) = {
-    MongoHelper.deleteSite(site)
-    complete{HttpResponse(StatusCodes.Gone)}
-  }
+  def getPage(url:String) = complete(HttpResponse(StatusCodes.OK, entity = HttpEntity(ContentType(MediaTypes.`application/json`), MongoHelper.getResponse(url).toList.toJson.toString())))
 
   val route = pathPrefix("crawler") {pathEnd {
       (post & entity(as[ConfigProperties]))      (handleCrawlerRequest)}}~
     pathPrefix("site") {pathEnd {
-        get                                      (getLatest)
-//        get {parameters('value.as[String])       (getPage)}~
-//        (delete & entity(as[Page]))              (deletePage)~
-    }}~
+       get                                       (getLatest)}}~
     pathPrefix("sites")  {pathEnd {(get)         (getAll)}}
 }

@@ -6,7 +6,6 @@ https://olka.github.io/stanoq-ui/
 
 TODO:
 
-0) Results persistence (autoload and previous results list)
 1) performance improvement
        recursion - stack size
        getdocument 100-400ms

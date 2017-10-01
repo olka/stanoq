@@ -8,7 +8,7 @@ import org.stanoq.crawler.model.{ConfigProperties, Node}
 class CrawlerSpec extends FlatSpec with Matchers {
 
   "Crawler" should "handle recursive page structure" in {
-    val crawler = new Crawler(ConfigProperties("https://www.websocket.org/echo.html", 2)).process()
+    val crawler = new Crawler(ConfigProperties("https://www.websocket.org/echo.html", 3)).process()
     crawler.root.parse.map(println)
     crawler.visitedPages.filter(url => crawler.root.print.contains(url)).size shouldBe crawler.root.convertToNode.getChildCount-1
   }

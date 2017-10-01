@@ -22,14 +22,16 @@ class ServiceSpec extends AsyncFlatSpec with Matchers with ScalatestRouteTest wi
   val crawlerService = new CrawlerService
   val streamService = new StreamService
   val configJson = Source.fromFile("config.json").mkString
+  val configProps = ConfigProperties("https://www.websocket.org/index.html",3)
 
   override def afterAll() = {
     println("After!")  // shut down the web server
+    MongoHelper.deleteSite(configProps)
     MongoHelper.deleteAll()
   }
 
   "CrawlerService" should "respond with 20 processed pages on crawling websocket.org with depth 3" in {
-    Post(s"/crawler", ConfigProperties("https://www.websocket.org/index.html",3)) ~> crawlerService.route ~> check {
+    Post(s"/crawler", configProps) ~> crawlerService.route ~> check {
       status shouldBe OK
       contentType shouldBe `application/json`
       responseAs[Node].getChildCount should be >=2
