@@ -27,8 +27,8 @@ class CrawlerService() extends CrawlerProtocols {
     }
   }
 
-  def getAll = complete(HttpResponse(StatusCodes.OK, entity = HttpEntity(ContentType(MediaTypes.`application/json`), MongoHelper.getAll.toList.toJson.toString())))
-  def getAny = complete(HttpResponse(StatusCodes.OK, entity = HttpEntity(ContentType(MediaTypes.`application/json`), MongoHelper.getAllWithLimit(1).toList.toJson.toString())))
+  def getAll = complete(HttpResponse(StatusCodes.OK, entity = HttpEntity(ContentType(MediaTypes.`application/json`), MongoHelper.getAll(0).toList.toJson.toString())))
+  def getLatest = complete(HttpResponse(StatusCodes.OK, entity = HttpEntity(ContentType(MediaTypes.`application/json`), MongoHelper.getLatest.toList.toJson.toString())))
 //  def getPage(url:String) = complete(HttpResponse(StatusCodes.OK, entity = HttpEntity(ContentType(MediaTypes.`application/json`), MongoHelper.getPage(url).toList.toJson.toString())))
   def persist(response: EchartResponse) = {
     MongoHelper.persist(response)
@@ -42,7 +42,7 @@ class CrawlerService() extends CrawlerProtocols {
   val route = pathPrefix("crawler") {pathEnd {
       (post & entity(as[ConfigProperties]))      (handleCrawlerRequest)}}~
     pathPrefix("node") {pathEnd {
-        get                                      (getAny)
+        get                                      (getLatest)
 //        get {parameters('value.as[String])       (getPage)}~
 //        (delete & entity(as[Page]))              (deletePage)~
 //        (post & entity(as[Page]))                (persist)}
