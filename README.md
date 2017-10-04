@@ -31,3 +31,5 @@ TODO:
 ================================================================================
 
 vcgencmd measure_temp
+
+sbt test:run - execute gatling test
